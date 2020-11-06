@@ -1,0 +1,9 @@
+.meu-titulo {
+    font-size: 2.5rem !important;
+}
+.navbar .logo-ssp {
+    height: 70px;
+    width: 70px;
+    justify-content: left;
+    display: flex;
+}
