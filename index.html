@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        #map {
+            width: 926px;
+            height: 541px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Bairros_Manaus_1.js"></script>
+        <script src="data/Locais_de_Votacao_2020_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-3.168236566749935,-60.192241162499975],[-2.907420441249928,-59.745127804499965]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            map.setMaxBounds(map.getBounds());
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_Bairros_Manaus_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Nome_Bairr'] !== null ? autolinker.link(feature.properties['Nome_Bairr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ZONAS'] !== null ? autolinker.link(feature.properties['ZONAS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CAMT'] !== null ? autolinker.link(feature.properties['CAMT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GABARITO_M'] !== null ? autolinker.link(feature.properties['GABARITO_M'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TESTADA_MI'] !== null ? autolinker.link(feature.properties['TESTADA_MI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AFAST_MIN_'] !== null ? autolinker.link(feature.properties['AFAST_MIN_'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AFAST_MIN1'] !== null ? autolinker.link(feature.properties['AFAST_MIN1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AFAST_MI_1'] !== null ? autolinker.link(feature.properties['AFAST_MI_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ATIVIDADES'] !== null ? autolinker.link(feature.properties['ATIVIDADES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBSERVAÇ'] !== null ? autolinker.link(feature.properties['OBSERVAÇ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OUTORGA_ON'] !== null ? autolinker.link(feature.properties['OUTORGA_ON'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DENSIDADE'] !== null ? autolinker.link(feature.properties['DENSIDADE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['VERTICALIZ'] !== null ? autolinker.link(feature.properties['VERTICALIZ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ÁREAS_VER'] !== null ? autolinker.link(feature.properties['ÁREAS_VER'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EQ_COMUNIT'] !== null ? autolinker.link(feature.properties['EQ_COMUNIT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SETOR'] !== null ? autolinker.link(feature.properties['SETOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBSERVACOE'] !== null ? autolinker.link(feature.properties['OBSERVACOE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AREA_USO_P'] !== null ? autolinker.link(feature.properties['AREA_USO_P'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COVID_19'] !== null ? autolinker.link(feature.properties['COVID_19'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD'] !== null ? autolinker.link(feature.properties['COD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BAIRRO'] !== null ? autolinker.link(feature.properties['BAIRRO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Bairros_Manaus_1_0() {
+            return {
+                pane: 'pane_Bairros_Manaus_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,207,80,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Bairros_Manaus_1');
+        map.getPane('pane_Bairros_Manaus_1').style.zIndex = 401;
+        map.getPane('pane_Bairros_Manaus_1').style['mix-blend-mode'] = 'normal';
+        var layer_Bairros_Manaus_1 = new L.geoJson(json_Bairros_Manaus_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Bairros_Manaus_1',
+            layerName: 'layer_Bairros_Manaus_1',
+            pane: 'pane_Bairros_Manaus_1',
+            onEachFeature: pop_Bairros_Manaus_1,
+            style: style_Bairros_Manaus_1_0,
+        });
+        bounds_group.addLayer(layer_Bairros_Manaus_1);
+        map.addLayer(layer_Bairros_Manaus_1);
+        function pop_Locais_de_Votacao_2020_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOME</th>\
+                        <td>' + (feature.properties['NOME'] !== null ? autolinker.link(feature.properties['NOME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ENDEREÇO</th>\
+                        <td>' + (feature.properties['ENDEREÇO'] !== null ? autolinker.link(feature.properties['ENDEREÇO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LOCALIDADE'] !== null ? autolinker.link(feature.properties['LOCALIDADE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">BAIRRO</th>\
+                        <td>' + (feature.properties['BAIRRO'] !== null ? autolinker.link(feature.properties['BAIRRO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ZONA</th>\
+                        <td>' + (feature.properties['ZONA'] !== null ? autolinker.link(feature.properties['ZONA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Latitude'] !== null ? autolinker.link(feature.properties['Latitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Longitude'] !== null ? autolinker.link(feature.properties['Longitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ZONA_1</th>\
+                        <td>' + (feature.properties['ZONA_1'] !== null ? autolinker.link(feature.properties['ZONA_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SEÇÕES</th>\
+                        <td>' + (feature.properties['SEÇÕES'] !== null ? autolinker.link(feature.properties['SEÇÕES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TOTAL_DE_E</th>\
+                        <td>' + (feature.properties['TOTAL_DE_E'] !== null ? autolinker.link(feature.properties['TOTAL_DE_E'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_LV'] !== null ? autolinker.link(feature.properties['COD_LV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Locais_de_Votacao_2020_2_0() {
+            return {
+                pane: 'pane_Locais_de_Votacao_2020_2',
+        rotationAngle: -0.0174533,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Urna.svg',
+            iconSize: [19.0, 19.0]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Locais_de_Votacao_2020_2');
+        map.getPane('pane_Locais_de_Votacao_2020_2').style.zIndex = 402;
+        map.getPane('pane_Locais_de_Votacao_2020_2').style['mix-blend-mode'] = 'normal';
+        var layer_Locais_de_Votacao_2020_2 = new L.geoJson(json_Locais_de_Votacao_2020_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Locais_de_Votacao_2020_2',
+            layerName: 'layer_Locais_de_Votacao_2020_2',
+            pane: 'pane_Locais_de_Votacao_2020_2',
+            onEachFeature: pop_Locais_de_Votacao_2020_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Locais_de_Votacao_2020_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Locais_de_Votacao_2020_2);
+        map.addLayer(layer_Locais_de_Votacao_2020_2);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_Locais_de_Votacao_2020_2,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'NOME'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Nome_Bairr": "str","BAIRRO": "str","NOME": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Nome_Bairr = document.createElement('div');
+            div_Nome_Bairr.id = "div_Nome_Bairr";
+            div_Nome_Bairr.className= "filterselect";
+            document.getElementById("menu").appendChild(div_Nome_Bairr);
+            sel_Nome_Bairr = document.createElement('select');
+            sel_Nome_Bairr.multiple = true;
+            sel_Nome_Bairr.size = 10;
+            sel_Nome_Bairr.id = "sel_Nome_Bairr";
+            var Nome_Bairr_options_str = "<option value='' unselected></option>";
+            sel_Nome_Bairr.onchange = function(){filterFunc()};
+            Nome_Bairr_options_str  += '<option value="ADRIANÓPOLIS">ADRIANÓPOLIS</option>';
+            Nome_Bairr_options_str  += '<option value="ALEIXO">ALEIXO</option>';
+            Nome_Bairr_options_str  += '<option value="ALVORADA">ALVORADA</option>';
+            Nome_Bairr_options_str  += '<option value="ARMANDO MENDES">ARMANDO MENDES</option>';
+            Nome_Bairr_options_str  += '<option value="BETÂNIA">BETÂNIA</option>';
+            Nome_Bairr_options_str  += '<option value="CACHOEIRINHA">CACHOEIRINHA</option>';
+            Nome_Bairr_options_str  += '<option value="CENTRO">CENTRO</option>';
+            Nome_Bairr_options_str  += '<option value="CHAPADA">CHAPADA</option>';
+            Nome_Bairr_options_str  += '<option value="CIDADE DE DEUS">CIDADE DE DEUS</option>';
+            Nome_Bairr_options_str  += '<option value="CIDADE NOVA">CIDADE NOVA</option>';
+            Nome_Bairr_options_str  += '<option value="COLÔNIA ANTÔNIO ALEIXO">COLÔNIA ANTÔNIO ALEIXO</option>';
+            Nome_Bairr_options_str  += '<option value="COLÔNIA OLIVEIRA MACHADO">COLÔNIA OLIVEIRA MACHADO</option>';
+            Nome_Bairr_options_str  += '<option value="COLÔNIA SANTO ANTÔNIO">COLÔNIA SANTO ANTÔNIO</option>';
+            Nome_Bairr_options_str  += '<option value="COLÔNIA TERRA NOVA">COLÔNIA TERRA NOVA</option>';
+            Nome_Bairr_options_str  += '<option value="COMPENSA">COMPENSA</option>';
+            Nome_Bairr_options_str  += '<option value="COROADO">COROADO</option>';
+            Nome_Bairr_options_str  += '<option value="CRESPO">CRESPO</option>';
+            Nome_Bairr_options_str  += '<option value="DA PAZ">DA PAZ</option>';
+            Nome_Bairr_options_str  += '<option value="DISTRITO INDUSTRIAL I">DISTRITO INDUSTRIAL I</option>';
+            Nome_Bairr_options_str  += '<option value="DISTRITO INDUSTRIAL II">DISTRITO INDUSTRIAL II</option>';
+            Nome_Bairr_options_str  += '<option value="DOM PEDRO I">DOM PEDRO I</option>';
+            Nome_Bairr_options_str  += '<option value="EDUCANDOS">EDUCANDOS</option>';
+            Nome_Bairr_options_str  += '<option value="FLORES">FLORES</option>';
+            Nome_Bairr_options_str  += '<option value="GILBERTO MESTRINHO">GILBERTO MESTRINHO</option>';
+            Nome_Bairr_options_str  += '<option value="GLÓRIA">GLÓRIA</option>';
+            Nome_Bairr_options_str  += '<option value="JAPIIM">JAPIIM</option>';
+            Nome_Bairr_options_str  += '<option value="JORGE TEIXEIRA">JORGE TEIXEIRA</option>';
+            Nome_Bairr_options_str  += '<option value="LAGO AZUL">LAGO AZUL</option>';
+            Nome_Bairr_options_str  += '<option value="LÍRIO DO VALE">LÍRIO DO VALE</option>';
+            Nome_Bairr_options_str  += '<option value="MAUAZINHO">MAUAZINHO</option>';
+            Nome_Bairr_options_str  += '<option value="MONTE DAS OLIVEIRAS">MONTE DAS OLIVEIRAS</option>';
+            Nome_Bairr_options_str  += '<option value="MORRO DA LIBERDADE">MORRO DA LIBERDADE</option>';
+            Nome_Bairr_options_str  += '<option value="NOSSA SENHORA APARECIDA">NOSSA SENHORA APARECIDA</option>';
+            Nome_Bairr_options_str  += '<option value="NOSSA SENHORA DAS GRAÇAS">NOSSA SENHORA DAS GRAÇAS</option>';
+            Nome_Bairr_options_str  += '<option value="NOVA CIDADE">NOVA CIDADE</option>';
+            Nome_Bairr_options_str  += '<option value="NOVA ESPERANÇA">NOVA ESPERANÇA</option>';
+            Nome_Bairr_options_str  += '<option value="NOVO ALEIXO">NOVO ALEIXO</option>';
+            Nome_Bairr_options_str  += '<option value="NOVO ISRAEL">NOVO ISRAEL</option>';
+            Nome_Bairr_options_str  += '<option value="PARQUE 10 DE NOVEMBRO">PARQUE 10 DE NOVEMBRO</option>';
+            Nome_Bairr_options_str  += '<option value="PETRÓPOLIS">PETRÓPOLIS</option>';
+            Nome_Bairr_options_str  += '<option value="PLANALTO">PLANALTO</option>';
+            Nome_Bairr_options_str  += '<option value="PONTA NEGRA">PONTA NEGRA</option>';
+            Nome_Bairr_options_str  += '<option value="PRAÇA 14 DE JANEIRO">PRAÇA 14 DE JANEIRO</option>';
+            Nome_Bairr_options_str  += '<option value="PRESIDENTE VARGAS">PRESIDENTE VARGAS</option>';
+            Nome_Bairr_options_str  += '<option value="PURAQUEQUARA">PURAQUEQUARA</option>';
+            Nome_Bairr_options_str  += '<option value="RAIZ">RAIZ</option>';
+            Nome_Bairr_options_str  += '<option value="REDENÇÃO">REDENÇÃO</option>';
+            Nome_Bairr_options_str  += '<option value="SANTA ETELVINA">SANTA ETELVINA</option>';
+            Nome_Bairr_options_str  += '<option value="SANTA LUZIA">SANTA LUZIA</option>';
+            Nome_Bairr_options_str  += '<option value="SANTO AGOSTINHO">SANTO AGOSTINHO</option>';
+            Nome_Bairr_options_str  += '<option value="SANTO ANTÔNIO">SANTO ANTÔNIO</option>';
+            Nome_Bairr_options_str  += '<option value="SÃO FRANCISCO">SÃO FRANCISCO</option>';
+            Nome_Bairr_options_str  += '<option value="SÃO GERALDO">SÃO GERALDO</option>';
+            Nome_Bairr_options_str  += '<option value="SÃO JORGE">SÃO JORGE</option>';
+            Nome_Bairr_options_str  += '<option value="SÃO JOSÉ OPERÁRIO">SÃO JOSÉ OPERÁRIO</option>';
+            Nome_Bairr_options_str  += '<option value="SÃO LÁZARO">SÃO LÁZARO</option>';
+            Nome_Bairr_options_str  += '<option value="SÃO RAIMUNDO">SÃO RAIMUNDO</option>';
+            Nome_Bairr_options_str  += '<option value="TANCREDO NEVES">TANCREDO NEVES</option>';
+            Nome_Bairr_options_str  += '<option value="TARUMÃ">TARUMÃ</option>';
+            Nome_Bairr_options_str  += '<option value="TARUMÃ-AÇÚ">TARUMÃ-AÇÚ</option>';
+            Nome_Bairr_options_str  += '<option value="VILA BURITI">VILA BURITI</option>';
+            Nome_Bairr_options_str  += '<option value="VILA DA PRATA">VILA DA PRATA</option>';
+            Nome_Bairr_options_str  += '<option value="ZUMBI DOS PALMARES">ZUMBI DOS PALMARES</option>';
+            sel_Nome_Bairr.innerHTML = Nome_Bairr_options_str;
+            div_Nome_Bairr.appendChild(sel_Nome_Bairr);
+            var lab_Nome_Bairr = document.createElement('div');
+            lab_Nome_Bairr.innerHTML = 'Nome_Bairr';
+            lab_Nome_Bairr.className = 'filterlabel';
+            div_Nome_Bairr.appendChild(lab_Nome_Bairr);
+            var reset_Nome_Bairr = document.createElement('div');
+            reset_Nome_Bairr.innerHTML = 'clear filter';
+            reset_Nome_Bairr.className = 'filterlabel';
+            reset_Nome_Bairr.onclick = function() {
+                var options = document.getElementById("sel_Nome_Bairr").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_Nome_Bairr.appendChild(reset_Nome_Bairr);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_BAIRRO = document.createElement('div');
+            div_BAIRRO.id = "div_BAIRRO";
+            div_BAIRRO.className= "filterselect";
+            document.getElementById("menu").appendChild(div_BAIRRO);
+            sel_BAIRRO = document.createElement('select');
+            sel_BAIRRO.multiple = true;
+            sel_BAIRRO.size = 10;
+            sel_BAIRRO.id = "sel_BAIRRO";
+            var BAIRRO_options_str = "<option value='' unselected></option>";
+            sel_BAIRRO.onchange = function(){filterFunc()};
+            BAIRRO_options_str  += '<option value="ADRIANÓPOLIS">ADRIANÓPOLIS</option>';
+            BAIRRO_options_str  += '<option value="ALEIXO">ALEIXO</option>';
+            BAIRRO_options_str  += '<option value="ALVORADA">ALVORADA</option>';
+            BAIRRO_options_str  += '<option value="ARMANDO MENDES">ARMANDO MENDES</option>';
+            BAIRRO_options_str  += '<option value="BETÂNIA">BETÂNIA</option>';
+            BAIRRO_options_str  += '<option value="CACHOEIRINHA">CACHOEIRINHA</option>';
+            BAIRRO_options_str  += '<option value="CENTRO">CENTRO</option>';
+            BAIRRO_options_str  += '<option value="CHAPADA">CHAPADA</option>';
+            BAIRRO_options_str  += '<option value="CIDADE DE DEUS">CIDADE DE DEUS</option>';
+            BAIRRO_options_str  += '<option value="CIDADE NOVA">CIDADE NOVA</option>';
+            BAIRRO_options_str  += '<option value="COLÔNIA ANTÔNIO ALEIXO">COLÔNIA ANTÔNIO ALEIXO</option>';
+            BAIRRO_options_str  += '<option value="COLÔNIA OLIVEIRA MACHADO">COLÔNIA OLIVEIRA MACHADO</option>';
+            BAIRRO_options_str  += '<option value="COLÔNIA SANTO ANTÔNIO">COLÔNIA SANTO ANTÔNIO</option>';
+            BAIRRO_options_str  += '<option value="COLÔNIA TERRA NOVA">COLÔNIA TERRA NOVA</option>';
+            BAIRRO_options_str  += '<option value="COMPENSA">COMPENSA</option>';
+            BAIRRO_options_str  += '<option value="COROADO">COROADO</option>';
+            BAIRRO_options_str  += '<option value="CRESPO">CRESPO</option>';
+            BAIRRO_options_str  += '<option value="DA PAZ">DA PAZ</option>';
+            BAIRRO_options_str  += '<option value="DISTRITO INDUSTRIAL I">DISTRITO INDUSTRIAL I</option>';
+            BAIRRO_options_str  += '<option value="DISTRITO INDUSTRIAL II">DISTRITO INDUSTRIAL II</option>';
+            BAIRRO_options_str  += '<option value="DOM PEDRO I">DOM PEDRO I</option>';
+            BAIRRO_options_str  += '<option value="EDUCANDOS">EDUCANDOS</option>';
+            BAIRRO_options_str  += '<option value="FLORES">FLORES</option>';
+            BAIRRO_options_str  += '<option value="GILBERTO MESTRINHO">GILBERTO MESTRINHO</option>';
+            BAIRRO_options_str  += '<option value="GLÓRIA">GLÓRIA</option>';
+            BAIRRO_options_str  += '<option value="JAPIIM">JAPIIM</option>';
+            BAIRRO_options_str  += '<option value="JORGE TEIXEIRA">JORGE TEIXEIRA</option>';
+            BAIRRO_options_str  += '<option value="LAGO AZUL">LAGO AZUL</option>';
+            BAIRRO_options_str  += '<option value="LÍRIO DO VALE">LÍRIO DO VALE</option>';
+            BAIRRO_options_str  += '<option value="MAUAZINHO">MAUAZINHO</option>';
+            BAIRRO_options_str  += '<option value="MONTE DAS OLIVEIRAS">MONTE DAS OLIVEIRAS</option>';
+            BAIRRO_options_str  += '<option value="MORRO DA LIBERDADE">MORRO DA LIBERDADE</option>';
+            BAIRRO_options_str  += '<option value="NOSSA SENHORA APARECIDA">NOSSA SENHORA APARECIDA</option>';
+            BAIRRO_options_str  += '<option value="NOSSA SENHORA DAS GRAÇAS">NOSSA SENHORA DAS GRAÇAS</option>';
+            BAIRRO_options_str  += '<option value="NOVA CIDADE">NOVA CIDADE</option>';
+            BAIRRO_options_str  += '<option value="NOVA ESPERANÇA">NOVA ESPERANÇA</option>';
+            BAIRRO_options_str  += '<option value="NOVO ALEIXO">NOVO ALEIXO</option>';
+            BAIRRO_options_str  += '<option value="NOVO ISRAEL">NOVO ISRAEL</option>';
+            BAIRRO_options_str  += '<option value="PARQUE 10 DE NOVEMBRO">PARQUE 10 DE NOVEMBRO</option>';
+            BAIRRO_options_str  += '<option value="PETRÓPOLIS">PETRÓPOLIS</option>';
+            BAIRRO_options_str  += '<option value="PLANALTO">PLANALTO</option>';
+            BAIRRO_options_str  += '<option value="PONTA NEGRA">PONTA NEGRA</option>';
+            BAIRRO_options_str  += '<option value="PRAÇA 14 DE JANEIRO">PRAÇA 14 DE JANEIRO</option>';
+            BAIRRO_options_str  += '<option value="PRESIDENTE VARGAS">PRESIDENTE VARGAS</option>';
+            BAIRRO_options_str  += '<option value="PURAQUEQUARA">PURAQUEQUARA</option>';
+            BAIRRO_options_str  += '<option value="RAIZ">RAIZ</option>';
+            BAIRRO_options_str  += '<option value="REDENÇÃO">REDENÇÃO</option>';
+            BAIRRO_options_str  += '<option value="SANTA ETELVINA">SANTA ETELVINA</option>';
+            BAIRRO_options_str  += '<option value="SANTA LUZIA">SANTA LUZIA</option>';
+            BAIRRO_options_str  += '<option value="SANTO AGOSTINHO">SANTO AGOSTINHO</option>';
+            BAIRRO_options_str  += '<option value="SANTO ANTÔNIO">SANTO ANTÔNIO</option>';
+            BAIRRO_options_str  += '<option value="SÃO FRANCISCO">SÃO FRANCISCO</option>';
+            BAIRRO_options_str  += '<option value="SÃO GERALDO">SÃO GERALDO</option>';
+            BAIRRO_options_str  += '<option value="SÃO JORGE">SÃO JORGE</option>';
+            BAIRRO_options_str  += '<option value="SÃO JOSÉ OPERÁRIO">SÃO JOSÉ OPERÁRIO</option>';
+            BAIRRO_options_str  += '<option value="SÃO LÁZARO">SÃO LÁZARO</option>';
+            BAIRRO_options_str  += '<option value="SÃO RAIMUNDO">SÃO RAIMUNDO</option>';
+            BAIRRO_options_str  += '<option value="TANCREDO NEVES">TANCREDO NEVES</option>';
+            BAIRRO_options_str  += '<option value="TARUMÃ">TARUMÃ</option>';
+            BAIRRO_options_str  += '<option value="TARUMÃ-AÇÚ">TARUMÃ-AÇÚ</option>';
+            BAIRRO_options_str  += '<option value="VILA BURITI">VILA BURITI</option>';
+            BAIRRO_options_str  += '<option value="VILA DA PRATA">VILA DA PRATA</option>';
+            BAIRRO_options_str  += '<option value="ZUMBI DOS PALMARES">ZUMBI DOS PALMARES</option>';
+            sel_BAIRRO.innerHTML = BAIRRO_options_str;
+            div_BAIRRO.appendChild(sel_BAIRRO);
+            var lab_BAIRRO = document.createElement('div');
+            lab_BAIRRO.innerHTML = 'BAIRRO';
+            lab_BAIRRO.className = 'filterlabel';
+            div_BAIRRO.appendChild(lab_BAIRRO);
+            var reset_BAIRRO = document.createElement('div');
+            reset_BAIRRO.innerHTML = 'clear filter';
+            reset_BAIRRO.className = 'filterlabel';
+            reset_BAIRRO.onclick = function() {
+                var options = document.getElementById("sel_BAIRRO").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_BAIRRO.appendChild(reset_BAIRRO);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_NOME = document.createElement('div');
+            div_NOME.id = "div_NOME";
+            div_NOME.className= "filterselect";
+            document.getElementById("menu").appendChild(div_NOME);
+            sel_NOME = document.createElement('select');
+            sel_NOME.multiple = true;
+            sel_NOME.size = 10;
+            sel_NOME.id = "sel_NOME";
+            var NOME_options_str = "<option value='' unselected></option>";
+            sel_NOME.onchange = function(){filterFunc()};
+            NOME_options_str  += '<option value="C EST DE CONVIVENCIA DO IDOSO - CECI APARECIDA">C EST DE CONVIVENCIA DO IDOSO - CECI APARECIDA</option>';
+            NOME_options_str  += '<option value="C. E. LA SALLE">C. E. LA SALLE</option>';
+            NOME_options_str  += '<option value="C.E. ADALBERTO VALLE">C.E. ADALBERTO VALLE</option>';
+            NOME_options_str  += '<option value="CENTRO DE EDUCAÇÃO JOSE ROBERTO TADROS">CENTRO DE EDUCAÇÃO JOSE ROBERTO TADROS</option>';
+            NOME_options_str  += '<option value="CENTRO DE REFERÊNCIA DA FAMÍLIA ANDRÉ ARAÚJO">CENTRO DE REFERÊNCIA DA FAMÍLIA ANDRÉ ARAÚJO</option>';
+            NOME_options_str  += '<option value="CENTRO DE TREINAMENTO INSS">CENTRO DE TREINAMENTO INSS</option>';
+            NOME_options_str  += '<option value="CENTRO DE TREINAMENTO PADRE JOSE DE ANCHIETA - CEPAN">CENTRO DE TREINAMENTO PADRE JOSE DE ANCHIETA - CEPAN</option>';
+            NOME_options_str  += '<option value="CENTRO EDUCACIONAL AMAZONIA">CENTRO EDUCACIONAL AMAZONIA</option>';
+            NOME_options_str  += '<option value="CENTRO EDUCACIONAL SEMEAR BOAS NOVAS">CENTRO EDUCACIONAL SEMEAR BOAS NOVAS</option>';
+            NOME_options_str  += '<option value="CENTRO EDUCACIONAL SÃO FRANCISCO">CENTRO EDUCACIONAL SÃO FRANCISCO</option>';
+            NOME_options_str  += '<option value="CENTRO UNIVERSITÁRIO NILTON LINS">CENTRO UNIVERSITÁRIO NILTON LINS</option>';
+            NOME_options_str  += '<option value="CETI DRA ZILDA ARNS NEUMANN">CETI DRA ZILDA ARNS NEUMANN</option>';
+            NOME_options_str  += '<option value="CETI ELISA BESSA FREIRE">CETI ELISA BESSA FREIRE</option>';
+            NOME_options_str  += '<option value="CETI GILBERTO MESTRINHO">CETI GILBERTO MESTRINHO</option>';
+            NOME_options_str  += '<option value="CETI JOAO DOS SANTOS BRAGA">CETI JOAO DOS SANTOS BRAGA</option>';
+            NOME_options_str  += '<option value="CETI ÁUREA PINHEIRO BRAGA">CETI ÁUREA PINHEIRO BRAGA</option>';
+            NOME_options_str  += '<option value="CIESA">CIESA</option>';
+            NOME_options_str  += '<option value="CMEI - ISMAIL AZIZ">CMEI - ISMAIL AZIZ</option>';
+            NOME_options_str  += '<option value="CMEI ABELINHA">CMEI ABELINHA</option>';
+            NOME_options_str  += '<option value="CMEI AILTON ROTH">CMEI AILTON ROTH</option>';
+            NOME_options_str  += '<option value="CMEI ARGENTINA BARROS.">CMEI ARGENTINA BARROS.</option>';
+            NOME_options_str  += '<option value="CMEI CECILIA CABRAL">CMEI CECILIA CABRAL</option>';
+            NOME_options_str  += '<option value="CMEI CORAÇÃO DE JESUS">CMEI CORAÇÃO DE JESUS</option>';
+            NOME_options_str  += '<option value="CMEI DILSEN SILVA ALVES">CMEI DILSEN SILVA ALVES</option>';
+            NOME_options_str  += '<option value="CMEI EVA GOMES DO NASCIMENTO">CMEI EVA GOMES DO NASCIMENTO</option>';
+            NOME_options_str  += '<option value="CMEI FERNANDO TRIGUEIRO">CMEI FERNANDO TRIGUEIRO</option>';
+            NOME_options_str  += '<option value="CMEI FLAVIO EMANUEL DO ESPIRITO SANTO">CMEI FLAVIO EMANUEL DO ESPIRITO SANTO</option>';
+            NOME_options_str  += '<option value="CMEI GRAZIELA RIBEIRO">CMEI GRAZIELA RIBEIRO</option>';
+            NOME_options_str  += '<option value="CMEI IRMA SERAFINA">CMEI IRMA SERAFINA</option>';
+            NOME_options_str  += '<option value="CMEI JOAO BARBOSA">CMEI JOAO BARBOSA</option>';
+            NOME_options_str  += '<option value="CMEI JURACY FREITAS MACIEL">CMEI JURACY FREITAS MACIEL</option>';
+            NOME_options_str  += '<option value="CMEI MAESTRO DIRSON COSTA">CMEI MAESTRO DIRSON COSTA</option>';
+            NOME_options_str  += '<option value="CMEI MARIA CLARA MACHADO">CMEI MARIA CLARA MACHADO</option>';
+            NOME_options_str  += '<option value="CMEI MARY ASSAYAG HANNAN">CMEI MARY ASSAYAG HANNAN</option>';
+            NOME_options_str  += '<option value="CMEI MOACIR ANDRADE">CMEI MOACIR ANDRADE</option>';
+            NOME_options_str  += '<option value="CMEI N. S. DA BOA ESPERANÇA">CMEI N. S. DA BOA ESPERANÇA</option>';
+            NOME_options_str  += '<option value="CMEI PADRE CLAUDIO DALBON">CMEI PADRE CLAUDIO DALBON</option>';
+            NOME_options_str  += '<option value="CMEI PE. LUIS RUAS">CMEI PE. LUIS RUAS</option>';
+            NOME_options_str  += '<option value="CMEI PROF DR FELIX VALOIS COELHO">CMEI PROF DR FELIX VALOIS COELHO</option>';
+            NOME_options_str  += '<option value="CMEI PROF JOSE ERICO II">CMEI PROF JOSE ERICO II</option>';
+            NOME_options_str  += '<option value="CMEI PROF. DIERDRE GAMA MACHADO">CMEI PROF. DIERDRE GAMA MACHADO</option>';
+            NOME_options_str  += '<option value="CMEI PROF. DULCINÉIA TINOCO">CMEI PROF. DULCINÉIA TINOCO</option>';
+            NOME_options_str  += '<option value="CMEI PROF. MARIA DO CEU VAZ DE OLIVEIRA">CMEI PROF. MARIA DO CEU VAZ DE OLIVEIRA</option>';
+            NOME_options_str  += '<option value="CMEI PROF. RAIMUNDO FIGUEIREDO">CMEI PROF. RAIMUNDO FIGUEIREDO</option>';
+            NOME_options_str  += '<option value="CMEI TEN ROXANA PEREIRA BONESSI">CMEI TEN ROXANA PEREIRA BONESSI</option>';
+            NOME_options_str  += '<option value="CMEI UMBERTO CALDERARO FILHO">CMEI UMBERTO CALDERARO FILHO</option>';
+            NOME_options_str  += '<option value="COLEGIO AMAZONENSE DOM PEDRO II">COLEGIO AMAZONENSE DOM PEDRO II</option>';
+            NOME_options_str  += '<option value="COLEGIO MILITAR DA POLICIA MILITAR">COLEGIO MILITAR DA POLICIA MILITAR</option>';
+            NOME_options_str  += '<option value="COLEGIO NOSSA SENHORA AUXILIADORA">COLEGIO NOSSA SENHORA AUXILIADORA</option>';
+            NOME_options_str  += '<option value="COLÉGIO DA POLICIA MILITAR AUREA PINHEIRO BRAGA">COLÉGIO DA POLICIA MILITAR AUREA PINHEIRO BRAGA</option>';
+            NOME_options_str  += '<option value="COLÉGIO LATO SENSU">COLÉGIO LATO SENSU</option>';
+            NOME_options_str  += '<option value="COLÉGIO PALAS ATENAS">COLÉGIO PALAS ATENAS</option>';
+            NOME_options_str  += '<option value="CORPO DE BOMBEIROS DO AMAZONAS">CORPO DE BOMBEIROS DO AMAZONAS</option>';
+            NOME_options_str  += '<option value="CSU HUMBERTO DE ALENCAR CASTELO BRANCO">CSU HUMBERTO DE ALENCAR CASTELO BRANCO</option>';
+            NOME_options_str  += '<option value="E E PRINCESA ISABEL">E E PRINCESA ISABEL</option>';
+            NOME_options_str  += '<option value="E. DE  ED. PROF. PADRE ESTÉLIO DALISON">E. DE  ED. PROF. PADRE ESTÉLIO DALISON</option>';
+            NOME_options_str  += '<option value="E. E ANTONIO LUCENA BITENCOURT">E. E ANTONIO LUCENA BITENCOURT</option>';
+            NOME_options_str  += '<option value="E. E BOM PASTOR">E. E BOM PASTOR</option>';
+            NOME_options_str  += '<option value="E. E JOSE CARLOS MESTRINHO">E. E JOSE CARLOS MESTRINHO</option>';
+            NOME_options_str  += '<option value="E. E. 1º DE MAIO">E. E. 1º DE MAIO</option>';
+            NOME_options_str  += '<option value="E. E. ADALBERTO VALE">E. E. ADALBERTO VALE</option>';
+            NOME_options_str  += '<option value="E. E. ADERSON DE MENEZES">E. E. ADERSON DE MENEZES</option>';
+            NOME_options_str  += '<option value="E. E. AGUINELO BITTENCOURT">E. E. AGUINELO BITTENCOURT</option>';
+            NOME_options_str  += '<option value="E. E. ALDEIA DO CONHECIMENTO PROF. RUTH PRESTES GONÇALVES">E. E. ALDEIA DO CONHECIMENTO PROF. RUTH PRESTES GONÇALVES</option>';
+            NOME_options_str  += '<option value="E. E. ALFREDO CAMPOS">E. E. ALFREDO CAMPOS</option>';
+            NOME_options_str  += '<option value="E. E. ALICE SALERNO">E. E. ALICE SALERNO</option>';
+            NOME_options_str  += '<option value="E. E. ALTAIR SEVERIANO NUNES">E. E. ALTAIR SEVERIANO NUNES</option>';
+            NOME_options_str  += '<option value="E. E. ANA LUCIA DE MORAES COSTA E SILVA">E. E. ANA LUCIA DE MORAES COSTA E SILVA</option>';
+            NOME_options_str  += '<option value="E. E. ANGELO RAMAZZOTTI">E. E. ANGELO RAMAZZOTTI</option>';
+            NOME_options_str  += '<option value="E. E. ANTOGILDO PASCOAL VIANA">E. E. ANTOGILDO PASCOAL VIANA</option>';
+            NOME_options_str  += '<option value="E. E. ANTONIO BITTENCOURT">E. E. ANTONIO BITTENCOURT</option>';
+            NOME_options_str  += '<option value="E. E. ANTONIO ENCARNACAO FILHO">E. E. ANTONIO ENCARNACAO FILHO</option>';
+            NOME_options_str  += '<option value="E. E. ANTONIO NUNES JIMENEZ">E. E. ANTONIO NUNES JIMENEZ</option>';
+            NOME_options_str  += '<option value="E. E. ANTOVILA MOURÃO VIEIRA">E. E. ANTOVILA MOURÃO VIEIRA</option>';
+            NOME_options_str  += '<option value="E. E. ARISTOTELES CONTE DE ALENCAR">E. E. ARISTOTELES CONTE DE ALENCAR</option>';
+            NOME_options_str  += '<option value="E. E. ARTHUR ARAUJO">E. E. ARTHUR ARAUJO</option>';
+            NOME_options_str  += '<option value="E. E. ARTHUR VIRGILIO FILHO">E. E. ARTHUR VIRGILIO FILHO</option>';
+            NOME_options_str  += '<option value="E. E. BELARMINO MARREIRO">E. E. BELARMINO MARREIRO</option>';
+            NOME_options_str  += '<option value="E. E. BENICIO LEAO">E. E. BENICIO LEAO</option>';
+            NOME_options_str  += '<option value="E. E. BENJAMIN MAGALHÃES BRANDÃO">E. E. BENJAMIN MAGALHÃES BRANDÃO</option>';
+            NOME_options_str  += '<option value="E. E. BRIGADEIRO JOÃO CAMARÃO TELLES RIBEIRO">E. E. BRIGADEIRO JOÃO CAMARÃO TELLES RIBEIRO</option>';
+            NOME_options_str  += '<option value="E. E. CACILDA BRAULE PINTO">E. E. CACILDA BRAULE PINTO</option>';
+            NOME_options_str  += '<option value="E. E. CID CABRAL DA SILVA">E. E. CID CABRAL DA SILVA</option>';
+            NOME_options_str  += '<option value="E. E. CLEOMENES DO CARMO CHAVES">E. E. CLEOMENES DO CARMO CHAVES</option>';
+            NOME_options_str  += '<option value="E. E. CONEGO AZEVEDO">E. E. CONEGO AZEVEDO</option>';
+            NOME_options_str  += '<option value="E. E. CORONEL PEDRO CÂMARA (QUARENTÃO)">E. E. CORONEL PEDRO CÂMARA (QUARENTÃO)</option>';
+            NOME_options_str  += '<option value="E. E. DE TEMPO INTEGRAL IRMA GABRIELLI COGELS">E. E. DE TEMPO INTEGRAL IRMA GABRIELLI COGELS</option>';
+            NOME_options_str  += '<option value="E. E. DEP. JOSUÉ CLAUDIO DE SOUZA - GM3">E. E. DEP. JOSUÉ CLAUDIO DE SOUZA - GM3</option>';
+            NOME_options_str  += '<option value="E. E. DESDOR ANDRE ARAUJO.">E. E. DESDOR ANDRE ARAUJO.</option>';
+            NOME_options_str  += '<option value="E. E. DOM JACSON DAMASCENO RODRIGUES">E. E. DOM JACSON DAMASCENO RODRIGUES</option>';
+            NOME_options_str  += '<option value="E. E. DOM JOAO DE SOUZA LIMA">E. E. DOM JOAO DE SOUZA LIMA</option>';
+            NOME_options_str  += '<option value="E. E. DOM MILTON CORREA PEREIRA">E. E. DOM MILTON CORREA PEREIRA</option>';
+            NOME_options_str  += '<option value="E. E. DORVAL PORTO">E. E. DORVAL PORTO</option>';
+            NOME_options_str  += '<option value="E. E. DR. JOSE MILTON BANDEIRA">E. E. DR. JOSE MILTON BANDEIRA</option>';
+            NOME_options_str  += '<option value="E. E. ELIANA SOCORRO PACHECO BRAGA">E. E. ELIANA SOCORRO PACHECO BRAGA</option>';
+            NOME_options_str  += '<option value="E. E. ENGº. ARTHUR SOARES AMORIM">E. E. ENGº. ARTHUR SOARES AMORIM</option>';
+            NOME_options_str  += '<option value="E. E. ERNESTO PENAFORT">E. E. ERNESTO PENAFORT</option>';
+            NOME_options_str  += '<option value="E. E. ERNESTO PINHO FILHO">E. E. ERNESTO PINHO FILHO</option>';
+            NOME_options_str  += '<option value="E. E. ESTELITA TAPAJÓS">E. E. ESTELITA TAPAJÓS</option>';
+            NOME_options_str  += '<option value="E. E. FARIAS BRITO">E. E. FARIAS BRITO</option>';
+            NOME_options_str  += '<option value="E. E. FLAVIO COSTA BRITO">E. E. FLAVIO COSTA BRITO</option>';
+            NOME_options_str  += '<option value="E. E. FRANCELINA ASSIS DANTAS">E. E. FRANCELINA ASSIS DANTAS</option>';
+            NOME_options_str  += '<option value="E. E. FRANCISCA BOTINELLY CUNHA E SILVA">E. E. FRANCISCA BOTINELLY CUNHA E SILVA</option>';
+            NOME_options_str  += '<option value="E. E. FRANCISCA PAULA DE JESUS IZABEL">E. E. FRANCISCA PAULA DE JESUS IZABEL</option>';
+            NOME_options_str  += '<option value="E. E. FREI MARIO MONACELLI">E. E. FREI MARIO MONACELLI</option>';
+            NOME_options_str  += '<option value="E. E. FUETH PAULO MOURÃO">E. E. FUETH PAULO MOURÃO</option>';
+            NOME_options_str  += '<option value="E. E. GENERAL SAMPAIO">E. E. GENERAL SAMPAIO</option>';
+            NOME_options_str  += '<option value="E. E. GETULIO VARGAS">E. E. GETULIO VARGAS</option>';
+            NOME_options_str  += '<option value="E. E. GILBERTO MESTRINHO">E. E. GILBERTO MESTRINHO</option>';
+            NOME_options_str  += '<option value="E. E. GONCALVES DIAS">E. E. GONCALVES DIAS</option>';
+            NOME_options_str  += '<option value="E. E. GOV. MELO E POVOAS">E. E. GOV. MELO E POVOAS</option>';
+            NOME_options_str  += '<option value="E. E. HELENA ARAUJO">E. E. HELENA ARAUJO</option>';
+            NOME_options_str  += '<option value="E. E. HERMENEGILDO DE CAMPOS">E. E. HERMENEGILDO DE CAMPOS</option>';
+            NOME_options_str  += '<option value="E. E. HILDA DE AZEVEDO TRIBUZY.">E. E. HILDA DE AZEVEDO TRIBUZY.</option>';
+            NOME_options_str  += '<option value="E. E. HOMERO DE MIRANDA LEAO">E. E. HOMERO DE MIRANDA LEAO</option>';
+            NOME_options_str  += '<option value="E. E. HUMBERTO DE CAMPOS">E. E. HUMBERTO DE CAMPOS</option>';
+            NOME_options_str  += '<option value="E. E. INSPETORA DULCINEIA VARELA MOURA">E. E. INSPETORA DULCINEIA VARELA MOURA</option>';
+            NOME_options_str  += '<option value="E. E. IRMÃ ADONAI POLITI">E. E. IRMÃ ADONAI POLITI</option>';
+            NOME_options_str  += '<option value="E. E. ISAAC BENAYON SABA">E. E. ISAAC BENAYON SABA</option>';
+            NOME_options_str  += '<option value="E. E. ISAAC BENZECRY">E. E. ISAAC BENZECRY</option>';
+            NOME_options_str  += '<option value="E. E. ISAAC SVERNER">E. E. ISAAC SVERNER</option>';
+            NOME_options_str  += '<option value="E. E. ITACYARA MARQUES PINHO">E. E. ITACYARA MARQUES PINHO</option>';
+            NOME_options_str  += '<option value="E. E. IZABEL BARRONCAS">E. E. IZABEL BARRONCAS</option>';
+            NOME_options_str  += '<option value="E. E. J. G. ARAÚJO">E. E. J. G. ARAÚJO</option>';
+            NOME_options_str  += '<option value="E. E. JACIMAR DA SILVA GAMA">E. E. JACIMAR DA SILVA GAMA</option>';
+            NOME_options_str  += '<option value="E. E. JOSE BENTES MONTEIRO">E. E. JOSE BENTES MONTEIRO</option>';
+            NOME_options_str  += '<option value="E. E. JOSE BERNARDINO LINDOSO">E. E. JOSE BERNARDINO LINDOSO</option>';
+            NOME_options_str  += '<option value="E. E. JOSE RIBAMAR DA COSTA">E. E. JOSE RIBAMAR DA COSTA</option>';
+            NOME_options_str  += '<option value="E. E. JOÃO BOSCO PANTOJA EVANGELISTA">E. E. JOÃO BOSCO PANTOJA EVANGELISTA</option>';
+            NOME_options_str  += '<option value="E. E. JULIA BITTENCOURT">E. E. JULIA BITTENCOURT</option>';
+            NOME_options_str  += '<option value="E. E. JULIO CESAR DE MORAES PASSOS">E. E. JULIO CESAR DE MORAES PASSOS</option>';
+            NOME_options_str  += '<option value="E. E. JURACY BATISTA GOMES">E. E. JURACY BATISTA GOMES</option>';
+            NOME_options_str  += '<option value="E. E. LECITA FONSECA RAMOS">E. E. LECITA FONSECA RAMOS</option>';
+            NOME_options_str  += '<option value="E. E. LENINA FERRARO DA SILVA">E. E. LENINA FERRARO DA SILVA</option>';
+            NOME_options_str  += '<option value="E. E. LEOPOLDO NEVES">E. E. LEOPOLDO NEVES</option>';
+            NOME_options_str  += '<option value="E. E. LETICIO DE CAMPOS DANTAS">E. E. LETICIO DE CAMPOS DANTAS</option>';
+            NOME_options_str  += '<option value="E. E. LIBERALINA WEILL">E. E. LIBERALINA WEILL</option>';
+            NOME_options_str  += '<option value="E. E. LIBERTADOR SIMON BOLIVAR">E. E. LIBERTADOR SIMON BOLIVAR</option>';
+            NOME_options_str  += '<option value="E. E. LUCINDA FELIX DE AZEVEDO">E. E. LUCINDA FELIX DE AZEVEDO</option>';
+            NOME_options_str  += '<option value="E. E. LUIZ VAZ DE CAMOES">E. E. LUIZ VAZ DE CAMOES</option>';
+            NOME_options_str  += '<option value="E. E. MACHADO DE ASSIS">E. E. MACHADO DE ASSIS</option>';
+            NOME_options_str  += '<option value="E. E. MAJOR SILVA COUTINHO">E. E. MAJOR SILVA COUTINHO</option>';
+            NOME_options_str  += '<option value="E. E. MANOEL ANTONIO DE SOUZA (AGRICOLA MIRIM)">E. E. MANOEL ANTONIO DE SOUZA (AGRICOLA MIRIM)</option>';
+            NOME_options_str  += '<option value="E. E. MANOEL RODRIGUES DE SOUZA">E. E. MANOEL RODRIGUES DE SOUZA</option>';
+            NOME_options_str  += '<option value="E. E. MARCANTONIO VILAÇA">E. E. MARCANTONIO VILAÇA</option>';
+            NOME_options_str  += '<option value="E. E. MARCANTONIO VILAÇA II - POLÍCIA MILITAR.">E. E. MARCANTONIO VILAÇA II - POLÍCIA MILITAR.</option>';
+            NOME_options_str  += '<option value="E. E. MARCIO NERY">E. E. MARCIO NERY</option>';
+            NOME_options_str  += '<option value="E. E. MARECHAL HERMES">E. E. MARECHAL HERMES</option>';
+            NOME_options_str  += '<option value="E. E. MARIA AMELIA DO ESPIRITO SANTO">E. E. MARIA AMELIA DO ESPIRITO SANTO</option>';
+            NOME_options_str  += '<option value="E. E. MARIA DA LUZ CALDERARO">E. E. MARIA DA LUZ CALDERARO</option>';
+            NOME_options_str  += '<option value="E. E. MARIA DE LOURDES RODRIGUES ARRUDA">E. E. MARIA DE LOURDES RODRIGUES ARRUDA</option>';
+            NOME_options_str  += '<option value="E. E. MARIA MADALENA SANTANA DE LIMA">E. E. MARIA MADALENA SANTANA DE LIMA</option>';
+            NOME_options_str  += '<option value="E. E. MARIA RODRIGUES TAPAJÓS">E. E. MARIA RODRIGUES TAPAJÓS</option>';
+            NOME_options_str  += '<option value="E. E. MARQUÊS DE SANTA CRUZ">E. E. MARQUÊS DE SANTA CRUZ</option>';
+            NOME_options_str  += '<option value="E. E. MELO BATISTA">E. E. MELO BATISTA</option>';
+            NOME_options_str  += '<option value="E. E. MILBURGES BEZERRA DE ARAUJO">E. E. MILBURGES BEZERRA DE ARAUJO</option>';
+            NOME_options_str  += '<option value="E. E. N. S. DA DIVINA PROVIDENCIA">E. E. N. S. DA DIVINA PROVIDENCIA</option>';
+            NOME_options_str  += '<option value="E. E. NATALIA UCHOA">E. E. NATALIA UCHOA</option>';
+            NOME_options_str  += '<option value="E. E. NOSSA SENHORA DAS GRAÇAS">E. E. NOSSA SENHORA DAS GRAÇAS</option>';
+            NOME_options_str  += '<option value="E. E. OCTAVIO MOURÃO">E. E. OCTAVIO MOURÃO</option>';
+            NOME_options_str  += '<option value="E. E. OLGA FOLCONE">E. E. OLGA FOLCONE</option>';
+            NOME_options_str  += '<option value="E. E. ONDINA DE PAULA RIBEIRO">E. E. ONDINA DE PAULA RIBEIRO</option>';
+            NOME_options_str  += '<option value="E. E. OSMAR PEDROSA">E. E. OSMAR PEDROSA</option>';
+            NOME_options_str  += '<option value="E. E. PAULA ANGELA FRANSSINETTI">E. E. PAULA ANGELA FRANSSINETTI</option>';
+            NOME_options_str  += '<option value="E. E. PE. AGOSTINHO MARTIN">E. E. PE. AGOSTINHO MARTIN</option>';
+            NOME_options_str  += '<option value="E. E. PE. LUIZ RUAS">E. E. PE. LUIZ RUAS</option>';
+            NOME_options_str  += '<option value="E. E. PE. PEDRO GHISLANDY">E. E. PE. PEDRO GHISLANDY</option>';
+            NOME_options_str  += '<option value="E. E. PEDRO SILVESTRE">E. E. PEDRO SILVESTRE</option>';
+            NOME_options_str  += '<option value="E. E. PLÁCIDO SERRANO">E. E. PLÁCIDO SERRANO</option>';
+            NOME_options_str  += '<option value="E. E. PRESIDENTE CASTELO BRANCO">E. E. PRESIDENTE CASTELO BRANCO</option>';
+            NOME_options_str  += '<option value="E. E. PROF DORVAL VARELA MOURA">E. E. PROF DORVAL VARELA MOURA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. ADELAIDE TAVARES DE MACEDO">E. E. PROF. ADELAIDE TAVARES DE MACEDO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. AGENOR FERREIRA LIMA">E. E. PROF. AGENOR FERREIRA LIMA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. ALDA BARATA">E. E. PROF. ALDA BARATA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. ANTONIO MAURITI MONTEIRO COELHO">E. E. PROF. ANTONIO MAURITI MONTEIRO COELHO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. BERENICE MARTINS">E. E. PROF. BERENICE MARTINS</option>';
+            NOME_options_str  += '<option value="E. E. PROF. DIANA PINHEIRO">E. E. PROF. DIANA PINHEIRO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. DIOFANTO VIEIRA MONTEIRO">E. E. PROF. DIOFANTO VIEIRA MONTEIRO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. JORGE KARAM NETO">E. E. PROF. JORGE KARAM NETO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. MARIA ARMINDA GUIMARAES DE ANDRADE">E. E. PROF. MARIA ARMINDA GUIMARAES DE ANDRADE</option>';
+            NOME_options_str  += '<option value="E. E. PROF. MARIA TEIXEIRA GOES">E. E. PROF. MARIA TEIXEIRA GOES</option>';
+            NOME_options_str  += '<option value="E. E. PROF. MYRTHES MARQUES TRIGUEIRO">E. E. PROF. MYRTHES MARQUES TRIGUEIRO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. NELSON ALVES FERREIRA">E. E. PROF. NELSON ALVES FERREIRA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. REINALDO THOMPSON">E. E. PROF. REINALDO THOMPSON</option>';
+            NOME_options_str  += '<option value="E. E. PROF. ROXANA PEREIRA BONESSE">E. E. PROF. ROXANA PEREIRA BONESSE</option>';
+            NOME_options_str  += '<option value="E. E. PROF. SEBASTIANA BRAGA">E. E. PROF. SEBASTIANA BRAGA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. SEBASTIAO AUGUSTO LOUREIRO FILHO">E. E. PROF. SEBASTIAO AUGUSTO LOUREIRO FILHO</option>';
+            NOME_options_str  += '<option value="E. E. PROF. TEREZA SIQUEIRA TUPINAMBA">E. E. PROF. TEREZA SIQUEIRA TUPINAMBA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. WALDIR GARCIA">E. E. PROF. WALDIR GARCIA</option>';
+            NOME_options_str  += '<option value="E. E. PROF. WALDOCKE FRICK DE LIRA- COLÉGIO MILITAR">E. E. PROF. WALDOCKE FRICK DE LIRA- COLÉGIO MILITAR</option>';
+            NOME_options_str  += '<option value="E. E. PROFª. BERNARDETE DO SOCORRO TRINDADE DA ROCHA">E. E. PROFª. BERNARDETE DO SOCORRO TRINDADE DA ROCHA</option>';
+            NOME_options_str  += '<option value="E. E. RAFAEL HENRIQUE PINHEIRO DOS SANTOS">E. E. RAFAEL HENRIQUE PINHEIRO DOS SANTOS</option>';
+            NOME_options_str  += '<option value="E. E. RAIMUNDA HOLANDA DE SOUZA">E. E. RAIMUNDA HOLANDA DE SOUZA</option>';
+            NOME_options_str  += '<option value="E. E. RAIMUNDO GOMES NOGUEIRA">E. E. RAIMUNDO GOMES NOGUEIRA</option>';
+            NOME_options_str  += '<option value="E. E. RIBEIRO DA CUNHA">E. E. RIBEIRO DA CUNHA</option>';
+            NOME_options_str  += '<option value="E. E. RILTON LEAL FILHO">E. E. RILTON LEAL FILHO</option>';
+            NOME_options_str  += '<option value="E. E. ROBERTO DOS SANTOS VIEIRA">E. E. ROBERTO DOS SANTOS VIEIRA</option>';
+            NOME_options_str  += '<option value="E. E. RODERICK DE CASTELO BRANCO">E. E. RODERICK DE CASTELO BRANCO</option>';
+            NOME_options_str  += '<option value="E. E. ROSINA FERREIRA DA SILVA">E. E. ROSINA FERREIRA DA SILVA</option>';
+            NOME_options_str  += '<option value="E. E. RUY ALENCAR">E. E. RUY ALENCAR</option>';
+            NOME_options_str  += '<option value="E. E. SALDANHA MARINHO">E. E. SALDANHA MARINHO</option>';
+            NOME_options_str  += '<option value="E. E. SAMUEL BENCHIMOL">E. E. SAMUEL BENCHIMOL</option>';
+            NOME_options_str  += '<option value="E. E. SANTANA">E. E. SANTANA</option>';
+            NOME_options_str  += '<option value="E. E. SANTO ANTONIO">E. E. SANTO ANTONIO</option>';
+            NOME_options_str  += '<option value="E. E. SAO LUIZ DE GONZAGA">E. E. SAO LUIZ DE GONZAGA</option>';
+            NOME_options_str  += '<option value="E. E. SEBASTIÃO NORÕES">E. E. SEBASTIÃO NORÕES</option>';
+            NOME_options_str  += '<option value="E. E. SEN JOÃO BOSCO RAMOS DE LIMA">E. E. SEN JOÃO BOSCO RAMOS DE LIMA</option>';
+            NOME_options_str  += '<option value="E. E. SEN PETRONIO PORTELLA">E. E. SEN PETRONIO PORTELLA</option>';
+            NOME_options_str  += '<option value="E. E. SEN. CUNHA MELO">E. E. SEN. CUNHA MELO</option>';
+            NOME_options_str  += '<option value="E. E. SEN. MANOEL SEVERIANO NUNES">E. E. SEN. MANOEL SEVERIANO NUNES</option>';
+            NOME_options_str  += '<option value="E. E. SENADOR EVANDRO DAS NEVES CARREIRA">E. E. SENADOR EVANDRO DAS NEVES CARREIRA</option>';
+            NOME_options_str  += '<option value="E. E. SOLON DE LUCENA">E. E. SOLON DE LUCENA</option>';
+            NOME_options_str  += '<option value="E. E. TEREZA DE JESUS VASCONCELOS DIAS">E. E. TEREZA DE JESUS VASCONCELOS DIAS</option>';
+            NOME_options_str  += '<option value="E. E. THOMÉ DE MEDEIROS RAPOSO">E. E. THOMÉ DE MEDEIROS RAPOSO</option>';
+            NOME_options_str  += '<option value="E. E. TIRADENTES">E. E. TIRADENTES</option>';
+            NOME_options_str  += '<option value="E. E. VASCO VASQUES">E. E. VASCO VASQUES</option>';
+            NOME_options_str  += '<option value="E. E. VICENTE SCHETTINI">E. E. VICENTE SCHETTINI</option>';
+            NOME_options_str  += '<option value="E. E. VICENTE TELLES DE SOUZA">E. E. VICENTE TELLES DE SOUZA</option>';
+            NOME_options_str  += '<option value="E. E. WALDEMIRO PERES LUSTOZA">E. E. WALDEMIRO PERES LUSTOZA</option>';
+            NOME_options_str  += '<option value="E. E. WILMA VITORIANO GEBER">E. E. WILMA VITORIANO GEBER</option>';
+            NOME_options_str  += '<option value="E. E. ZULMIRA BITTENCOURT">E. E. ZULMIRA BITTENCOURT</option>';
+            NOME_options_str  += '<option value="E. M FRANCISCO MAIA DE AMORIM">E. M FRANCISCO MAIA DE AMORIM</option>';
+            NOME_options_str  += '<option value="E. M.  ANA MARIA DE SOUZA BARROS">E. M.  ANA MARIA DE SOUZA BARROS</option>';
+            NOME_options_str  += '<option value="E. M. ABILIO ALENCAR">E. M. ABILIO ALENCAR</option>';
+            NOME_options_str  += '<option value="E. M. ALBÉRICO ANTUNES DE OLIVEIRA">E. M. ALBÉRICO ANTUNES DE OLIVEIRA</option>';
+            NOME_options_str  += '<option value="E. M. ALFREDO LINHARES">E. M. ALFREDO LINHARES</option>';
+            NOME_options_str  += '<option value="E. M. ALMERON CAMINHA MONTEIRO">E. M. ALMERON CAMINHA MONTEIRO</option>';
+            NOME_options_str  += '<option value="E. M. AMINE DAOU LINDOSO">E. M. AMINE DAOU LINDOSO</option>';
+            NOME_options_str  += '<option value="E. M. ANA MOTA BRAGA">E. M. ANA MOTA BRAGA</option>';
+            NOME_options_str  += '<option value="E. M. ANA SENA RODRIGUES">E. M. ANA SENA RODRIGUES</option>';
+            NOME_options_str  += '<option value="E. M. ANASTÁCIO ASSUNÇÃO">E. M. ANASTÁCIO ASSUNÇÃO</option>';
+            NOME_options_str  += '<option value="E. M. ANTISTHENES DE OLIVEIRA PINTO">E. M. ANTISTHENES DE OLIVEIRA PINTO</option>';
+            NOME_options_str  += '<option value="E. M. ANTONIA ALEXANDRINA.">E. M. ANTONIA ALEXANDRINA.</option>';
+            NOME_options_str  += '<option value="E. M. ANTONIA MEDEIROS DA SILVA">E. M. ANTONIA MEDEIROS DA SILVA</option>';
+            NOME_options_str  += '<option value="E. M. ANTONINA BORGES DE SÁ">E. M. ANTONINA BORGES DE SÁ</option>';
+            NOME_options_str  += '<option value="E. M. ANTONIO MORAES">E. M. ANTONIO MORAES</option>';
+            NOME_options_str  += '<option value="E. M. ARISTOTELES CONTE DE ALENCAR">E. M. ARISTOTELES CONTE DE ALENCAR</option>';
+            NOME_options_str  += '<option value="E. M. ARMANDO MENDES">E. M. ARMANDO MENDES</option>';
+            NOME_options_str  += '<option value="E. M. ARTE E CULTURA">E. M. ARTE E CULTURA</option>';
+            NOME_options_str  += '<option value="E. M. ARTHUR ENGRACIO DA SILVA">E. M. ARTHUR ENGRACIO DA SILVA</option>';
+            NOME_options_str  += '<option value="E. M. AUREO NONATO">E. M. AUREO NONATO</option>';
+            NOME_options_str  += '<option value="E. M. BIÓLOGO ADOLPHO DUCKE">E. M. BIÓLOGO ADOLPHO DUCKE</option>';
+            NOME_options_str  += '<option value="E. M. CARLOS GOMES">E. M. CARLOS GOMES</option>';
+            NOME_options_str  += '<option value="E. M. CARMEM GUIMARAES HAGGE">E. M. CARMEM GUIMARAES HAGGE</option>';
+            NOME_options_str  += '<option value="E. M. CAROLINA PEROLINA RAIMUNDA ALMEIDA">E. M. CAROLINA PEROLINA RAIMUNDA ALMEIDA</option>';
+            NOME_options_str  += '<option value="E. M. CHAPEUZINHO DE PALHA">E. M. CHAPEUZINHO DE PALHA</option>';
+            NOME_options_str  += '<option value="E. M. CLEONICE DE MENEZES FERNANDES">E. M. CLEONICE DE MENEZES FERNANDES</option>';
+            NOME_options_str  += '<option value="E. M. CORONEL JORGE TEIXEIRA DE OLIVEIRA">E. M. CORONEL JORGE TEIXEIRA DE OLIVEIRA</option>';
+            NOME_options_str  += '<option value="E. M. DJALMA PASSOS.">E. M. DJALMA PASSOS.</option>';
+            NOME_options_str  += '<option value="E. M. DOM ADALBERTO MARZI">E. M. DOM ADALBERTO MARZI</option>';
+            NOME_options_str  += '<option value="E. M. DOM JACSON DAMASCENO RODRIGUES">E. M. DOM JACSON DAMASCENO RODRIGUES</option>';
+            NOME_options_str  += '<option value="E. M. DOM LUIZ VIEIRA">E. M. DOM LUIZ VIEIRA</option>';
+            NOME_options_str  += '<option value="E. M. DOM MILTON CORREA PEREIRA">E. M. DOM MILTON CORREA PEREIRA</option>';
+            NOME_options_str  += '<option value="E. M. DR. ARISTÓFANES BEZERRA DE CASTRO">E. M. DR. ARISTÓFANES BEZERRA DE CASTRO</option>';
+            NOME_options_str  += '<option value="E. M. DR. JOAO QUEIROZ">E. M. DR. JOAO QUEIROZ</option>';
+            NOME_options_str  += '<option value="E. M. DR. MAGALHAES CORDEIRO">E. M. DR. MAGALHAES CORDEIRO</option>';
+            NOME_options_str  += '<option value="E. M. DR. OLAVO DAS NEVES">E. M. DR. OLAVO DAS NEVES</option>';
+            NOME_options_str  += '<option value="E. M. DR. PAULO PINTO NERY">E. M. DR. PAULO PINTO NERY</option>';
+            NOME_options_str  += '<option value="E. M. DR. VICENTE MENDONÇA JÚNIOR">E. M. DR. VICENTE MENDONÇA JÚNIOR</option>';
+            NOME_options_str  += '<option value="E. M. ELINEA FOLHADELA">E. M. ELINEA FOLHADELA</option>';
+            NOME_options_str  += '<option value="E. M. ELVIRA BORGES">E. M. ELVIRA BORGES</option>';
+            NOME_options_str  += '<option value="E. M. ENG JOÃO ALBERTO DE MENEZES BRAGA.">E. M. ENG JOÃO ALBERTO DE MENEZES BRAGA.</option>';
+            NOME_options_str  += '<option value="E. M. ENG. ANTONIO NELSON DE OLIVEIRA NETO">E. M. ENG. ANTONIO NELSON DE OLIVEIRA NETO</option>';
+            NOME_options_str  += '<option value="E. M. ESCRITOR ANISIO TEIXEIRA">E. M. ESCRITOR ANISIO TEIXEIRA</option>';
+            NOME_options_str  += '<option value="E. M. ESMERALDA SOARES NEVES">E. M. ESMERALDA SOARES NEVES</option>';
+            NOME_options_str  += '<option value="E. M. ETELVINA PEREIRA BRAGA">E. M. ETELVINA PEREIRA BRAGA</option>';
+            NOME_options_str  += '<option value="E. M. FIRME NA FE">E. M. FIRME NA FE</option>';
+            NOME_options_str  += '<option value="E. M. FRANCISCA GOMES MENDES">E. M. FRANCISCA GOMES MENDES</option>';
+            NOME_options_str  += '<option value="E. M. FRANCISCA MENDES">E. M. FRANCISCA MENDES</option>';
+            NOME_options_str  += '<option value="E. M. FRANCISCO GUEDES DE QUEIROZ">E. M. FRANCISCO GUEDES DE QUEIROZ</option>';
+            NOME_options_str  += '<option value="E. M. FRANCISCO NUNES DA SILVA">E. M. FRANCISCO NUNES DA SILVA</option>';
+            NOME_options_str  += '<option value="E. M. GENERAL ARISTIDES BARRETO">E. M. GENERAL ARISTIDES BARRETO</option>';
+            NOME_options_str  += '<option value="E. M. GOV. DANILO MATTOS AREOSA">E. M. GOV. DANILO MATTOS AREOSA</option>';
+            NOME_options_str  += '<option value="E. M. GOV. PLINIO RAMOS COELHO">E. M. GOV. PLINIO RAMOS COELHO</option>';
+            NOME_options_str  += '<option value="E. M. GRAZIELA RIBEIRO">E. M. GRAZIELA RIBEIRO</option>';
+            NOME_options_str  += '<option value="E. M. GUILHERME BARBOSA BARKER">E. M. GUILHERME BARBOSA BARKER</option>';
+            NOME_options_str  += '<option value="E. M. HEMETERIO CABRINHA">E. M. HEMETERIO CABRINHA</option>';
+            NOME_options_str  += '<option value="E. M. HONORINA VASCONCELOS">E. M. HONORINA VASCONCELOS</option>';
+            NOME_options_str  += '<option value="E. M. IRMA HELENA AUGUSTA WALCOT">E. M. IRMA HELENA AUGUSTA WALCOT</option>';
+            NOME_options_str  += '<option value="E. M. IRMA ZENIR DE CASTRO ALVES">E. M. IRMA ZENIR DE CASTRO ALVES</option>';
+            NOME_options_str  += '<option value="E. M. IRMÃ EDELVIRA DE SOUTO CABRAL">E. M. IRMÃ EDELVIRA DE SOUTO CABRAL</option>';
+            NOME_options_str  += '<option value="E. M. ISABEL ANGARITA">E. M. ISABEL ANGARITA</option>';
+            NOME_options_str  += '<option value="E. M. IVONE MARIA BARBOSA E SILVA">E. M. IVONE MARIA BARBOSA E SILVA</option>';
+            NOME_options_str  += '<option value="E. M. JARLECE DA CONCEIÇÃO ZARANZA">E. M. JARLECE DA CONCEIÇÃO ZARANZA</option>';
+            NOME_options_str  += '<option value="E. M. JORGE AMADO">E. M. JORGE AMADO</option>';
+            NOME_options_str  += '<option value="E. M. JORGE DE REZENDE SOBRINHO">E. M. JORGE DE REZENDE SOBRINHO</option>';
+            NOME_options_str  += '<option value="E. M. JORNALISTA SABÁ RAPOSO">E. M. JORNALISTA SABÁ RAPOSO</option>';
+            NOME_options_str  += '<option value="E. M. JOSE TAVARES DE MACEDO">E. M. JOSE TAVARES DE MACEDO</option>';
+            NOME_options_str  += '<option value="E. M. JOÃO ALFREDO">E. M. JOÃO ALFREDO</option>';
+            NOME_options_str  += '<option value="E. M. JOÃO DOS SANTOS BRAGA">E. M. JOÃO DOS SANTOS BRAGA</option>';
+            NOME_options_str  += '<option value="E. M. JOÃO VALENTE">E. M. JOÃO VALENTE</option>';
+            NOME_options_str  += '<option value="E. M. LEONOR UCHOA DE AMORIM">E. M. LEONOR UCHOA DE AMORIM</option>';
+            NOME_options_str  += '<option value="E. M. LIRIO DO VALE">E. M. LIRIO DO VALE</option>';
+            NOME_options_str  += '<option value="E. M. LORIS CORDOVIL">E. M. LORIS CORDOVIL</option>';
+            NOME_options_str  += '<option value="E. M. LUCILA FREITAS">E. M. LUCILA FREITAS</option>';
+            NOME_options_str  += '<option value="E. M. MADRE TEREZA DE CALCUTÁ">E. M. MADRE TEREZA DE CALCUTÁ</option>';
+            NOME_options_str  += '<option value="E. M. MARECHAL CANDIDO RONDON">E. M. MARECHAL CANDIDO RONDON</option>';
+            NOME_options_str  += '<option value="E. M. MARIA AUXILIADORA DOS SANTOS AZEVEDO">E. M. MARIA AUXILIADORA DOS SANTOS AZEVEDO</option>';
+            NOME_options_str  += '<option value="E. M. MARIA DO CARMO REBELLO DE SOUZA">E. M. MARIA DO CARMO REBELLO DE SOUZA</option>';
+            NOME_options_str  += '<option value="E. M. MARIA FERNANDES">E. M. MARIA FERNANDES</option>';
+            NOME_options_str  += '<option value="E. M. MARIA LIRA PEREIRA">E. M. MARIA LIRA PEREIRA</option>';
+            NOME_options_str  += '<option value="E. M. MARIA MADALENA CORREA">E. M. MARIA MADALENA CORREA</option>';
+            NOME_options_str  += '<option value="E. M. MARIA RUFINA DE ALMEIDA">E. M. MARIA RUFINA DE ALMEIDA</option>';
+            NOME_options_str  += '<option value="E. M. MINISTRO MARIO ANDREAZZA">E. M. MINISTRO MARIO ANDREAZZA</option>';
+            NOME_options_str  += '<option value="E. M. MOISES DE FRANCA VIANA">E. M. MOISES DE FRANCA VIANA</option>';
+            NOME_options_str  += '<option value="E. M. MONSENHOR FRANCISCO DA SILVEIRA PINTO">E. M. MONSENHOR FRANCISCO DA SILVEIRA PINTO</option>';
+            NOME_options_str  += '<option value="E. M. NAZIRA CHAMMA DAOU">E. M. NAZIRA CHAMMA DAOU</option>';
+            NOME_options_str  += '<option value="E. M. NESTOR JOSE DO NASCIMENTO">E. M. NESTOR JOSE DO NASCIMENTO</option>';
+            NOME_options_str  += '<option value="E. M. NINA DE ARAUJO COSTA LINS">E. M. NINA DE ARAUJO COSTA LINS</option>';
+            NOME_options_str  += '<option value="E. M. NOSSA SENHORA DAS GRAÇAS">E. M. NOSSA SENHORA DAS GRAÇAS</option>';
+            NOME_options_str  += '<option value="E. M. NOSSA SENHORA DO ROSÁRIO">E. M. NOSSA SENHORA DO ROSÁRIO</option>';
+            NOME_options_str  += '<option value="E. M. NOVA VIDA">E. M. NOVA VIDA</option>';
+            NOME_options_str  += '<option value="E. M. OLGA GUTMANN BENARIO">E. M. OLGA GUTMANN BENARIO</option>';
+            NOME_options_str  += '<option value="E. M. PAULA FRASSINETTI">E. M. PAULA FRASSINETTI</option>';
+            NOME_options_str  += '<option value="E. M. PE. JOSÉ DE ANCHIETA">E. M. PE. JOSÉ DE ANCHIETA</option>';
+            NOME_options_str  += '<option value="E. M. PE. JOÃO DVRIES">E. M. PE. JOÃO DVRIES</option>';
+            NOME_options_str  += '<option value="E. M. PE. MAURO FANCELLO">E. M. PE. MAURO FANCELLO</option>';
+            NOME_options_str  += '<option value="E. M. PE. RAIMUNDO NONATO PINHEIRO">E. M. PE. RAIMUNDO NONATO PINHEIRO</option>';
+            NOME_options_str  += '<option value="E. M. PE. SEBASTIAO LUIZ DOS SANTOS PUGA BARBOSA">E. M. PE. SEBASTIAO LUIZ DOS SANTOS PUGA BARBOSA</option>';
+            NOME_options_str  += '<option value="E. M. PEQUENO PRINCIPE">E. M. PEQUENO PRINCIPE</option>';
+            NOME_options_str  += '<option value="E. M. PERCILIA DO NASCIMENTO SOUZA">E. M. PERCILIA DO NASCIMENTO SOUZA</option>';
+            NOME_options_str  += '<option value="E. M. POETA MARIO DE MIRANDA QUINTANA">E. M. POETA MARIO DE MIRANDA QUINTANA</option>';
+            NOME_options_str  += '<option value="E. M. PRESIDENTE TANCREDO NEVES">E. M. PRESIDENTE TANCREDO NEVES</option>';
+            NOME_options_str  += '<option value="E. M. PROF RAIMUNDA ENEIDA CERQUINHO DA SILVA.">E. M. PROF RAIMUNDA ENEIDA CERQUINHO DA SILVA.</option>';
+            NOME_options_str  += '<option value="E. M. PROF RITA DE CASSIA C. SILVA">E. M. PROF RITA DE CASSIA C. SILVA</option>';
+            NOME_options_str  += '<option value="E. M. PROF SULAMITA PEREIRA GONÇALVES.">E. M. PROF SULAMITA PEREIRA GONÇALVES.</option>';
+            NOME_options_str  += '<option value="E. M. PROF. AGENOR FERREIRA LIMA">E. M. PROF. AGENOR FERREIRA LIMA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. ALBERTO MAKAREM">E. M. PROF. ALBERTO MAKAREM</option>';
+            NOME_options_str  += '<option value="E. M. PROF. ALVARO VALLE">E. M. PROF. ALVARO VALLE</option>';
+            NOME_options_str  += '<option value="E. M. PROF. EDINIR TELLES GUIMARÃES">E. M. PROF. EDINIR TELLES GUIMARÃES</option>';
+            NOME_options_str  += '<option value="E. M. PROF. ELIANA LUCIA MONTEIRO DA SILVA">E. M. PROF. ELIANA LUCIA MONTEIRO DA SILVA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. ELIZABETH BELTRAO">E. M. PROF. ELIZABETH BELTRAO</option>';
+            NOME_options_str  += '<option value="E. M. PROF. FRANCISCA PEREIRA DE ARAUJO">E. M. PROF. FRANCISCA PEREIRA DE ARAUJO</option>';
+            NOME_options_str  += '<option value="E. M. PROF. FRANCISCA PERGENTINA DA SILVA">E. M. PROF. FRANCISCA PERGENTINA DA SILVA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. GELCY SENA ABRANTIS">E. M. PROF. GELCY SENA ABRANTIS</option>';
+            NOME_options_str  += '<option value="E. M. PROF. ISABEL VICTORIA DO CARMO RIBEIRO">E. M. PROF. ISABEL VICTORIA DO CARMO RIBEIRO</option>';
+            NOME_options_str  += '<option value="E. M. PROF. JOAQUIM GONZAGA PINHEIRO">E. M. PROF. JOAQUIM GONZAGA PINHEIRO</option>';
+            NOME_options_str  += '<option value="E. M. PROF. JOSE WANDEMBERG RAMOS LEITE">E. M. PROF. JOSE WANDEMBERG RAMOS LEITE</option>';
+            NOME_options_str  += '<option value="E. M. PROF. JOÃO CHRYSÓSTOMO DE OLIVEIRA">E. M. PROF. JOÃO CHRYSÓSTOMO DE OLIVEIRA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. JULIO CESAR DE MORAES PASSOS">E. M. PROF. JULIO CESAR DE MORAES PASSOS</option>';
+            NOME_options_str  += '<option value="E. M. PROF. MARLY GARGANTA">E. M. PROF. MARLY GARGANTA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. NILTON LINS">E. M. PROF. NILTON LINS</option>';
+            NOME_options_str  += '<option value="E. M. PROF. RAIMUNDO GONÇALVES NOGUEIRA">E. M. PROF. RAIMUNDO GONÇALVES NOGUEIRA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. RICARDO PEREIRA PARENTE">E. M. PROF. RICARDO PEREIRA PARENTE</option>';
+            NOME_options_str  += '<option value="E. M. PROF. ROBERTO DOS SANTOS VIEIRA">E. M. PROF. ROBERTO DOS SANTOS VIEIRA</option>';
+            NOME_options_str  += '<option value="E. M. PROF. SEBASTIÃO NORÕES">E. M. PROF. SEBASTIÃO NORÕES</option>';
+            NOME_options_str  += '<option value="E. M. PROF. SERGIO AUGUSTO PARÁ">E. M. PROF. SERGIO AUGUSTO PARÁ</option>';
+            NOME_options_str  += '<option value="E. M. PROF. WALDIR GARCIA">E. M. PROF. WALDIR GARCIA</option>';
+            NOME_options_str  += '<option value="E. M. PROFESSORA IGNÊS DE VASCONCELLOS DIAS">E. M. PROFESSORA IGNÊS DE VASCONCELLOS DIAS</option>';
+            NOME_options_str  += '<option value="E. M. PROFº. PAULO GRAÇA">E. M. PROFº. PAULO GRAÇA</option>';
+            NOME_options_str  += '<option value="E. M. RAIMUNDO THEODORO BOTINELLY ASSUMPÇÃO">E. M. RAIMUNDO THEODORO BOTINELLY ASSUMPÇÃO</option>';
+            NOME_options_str  += '<option value="E. M. RAUL DE QUEIROZ MENEZES VEIGA">E. M. RAUL DE QUEIROZ MENEZES VEIGA</option>';
+            NOME_options_str  += '<option value="E. M. RODOLFO VALE, 210">E. M. RODOLFO VALE, 210</option>';
+            NOME_options_str  += '<option value="E. M. ROSA SVERNER">E. M. ROSA SVERNER</option>';
+            NOME_options_str  += '<option value="E. M. RUBEM DA SILVA PEIXOTO">E. M. RUBEM DA SILVA PEIXOTO</option>';
+            NOME_options_str  += '<option value="E. M. RUBENS SVERNER">E. M. RUBENS SVERNER</option>';
+            NOME_options_str  += '<option value="E. M. RUI BARBOSA LIMA">E. M. RUI BARBOSA LIMA</option>';
+            NOME_options_str  += '<option value="E. M. SAGRADO CORAÇÃO DE JESUS">E. M. SAGRADO CORAÇÃO DE JESUS</option>';
+            NOME_options_str  += '<option value="E. M. SANTA RITA DE CASSIA">E. M. SANTA RITA DE CASSIA</option>';
+            NOME_options_str  += '<option value="E. M. SANTO AGOSTINHO">E. M. SANTO AGOSTINHO</option>';
+            NOME_options_str  += '<option value="E. M. SAO BENEDITO">E. M. SAO BENEDITO</option>';
+            NOME_options_str  += '<option value="E. M. SAO LUIZ">E. M. SAO LUIZ</option>';
+            NOME_options_str  += '<option value="E. M. SARA BARROSO CORDEIRO">E. M. SARA BARROSO CORDEIRO</option>';
+            NOME_options_str  += '<option value="E. M. SEN. DARCY RIBEIRO">E. M. SEN. DARCY RIBEIRO</option>';
+            NOME_options_str  += '<option value="E. M. SEN. FABIO PEREIRA DE LUCENA BITTENCOURT">E. M. SEN. FABIO PEREIRA DE LUCENA BITTENCOURT</option>';
+            NOME_options_str  += '<option value="E. M. SERGIO ALFREDO PESSOA FIGUEIREDO">E. M. SERGIO ALFREDO PESSOA FIGUEIREDO</option>';
+            NOME_options_str  += '<option value="E. M. SIRIA MAMED AMED CHAGAS">E. M. SIRIA MAMED AMED CHAGAS</option>';
+            NOME_options_str  += '<option value="E. M. SONIA MARIA DA SILVA BARBOSA">E. M. SONIA MARIA DA SILVA BARBOSA</option>';
+            NOME_options_str  += '<option value="E. M. SÃO DIMAS">E. M. SÃO DIMAS</option>';
+            NOME_options_str  += '<option value="E. M. SÃO JOSÉ">E. M. SÃO JOSÉ</option>';
+            NOME_options_str  += '<option value="E. M. SÃO PEDRO">E. M. SÃO PEDRO</option>';
+            NOME_options_str  += '<option value="E. M. SÃO SEBASTIÃO">E. M. SÃO SEBASTIÃO</option>';
+            NOME_options_str  += '<option value="E. M. SÃO VICENTE DE PAULA">E. M. SÃO VICENTE DE PAULA</option>';
+            NOME_options_str  += '<option value="E. M. TEREZA ROSA ABTIBOL">E. M. TEREZA ROSA ABTIBOL</option>';
+            NOME_options_str  += '<option value="E. M. THALLES SILVESTRE">E. M. THALLES SILVESTRE</option>';
+            NOME_options_str  += '<option value="E. M. THEMISTOCLES GADELHA">E. M. THEMISTOCLES GADELHA</option>';
+            NOME_options_str  += '<option value="E. M. THOMAS MEIRELLES">E. M. THOMAS MEIRELLES</option>';
+            NOME_options_str  += '<option value="E. M. ULISSES GUIMARAES">E. M. ULISSES GUIMARAES</option>';
+            NOME_options_str  += '<option value="E. M. VICENTE CRUZ">E. M. VICENTE CRUZ</option>';
+            NOME_options_str  += '<option value="E. M. VICENTE DE PAULA">E. M. VICENTE DE PAULA</option>';
+            NOME_options_str  += '<option value="E. M. VILA DA FELICIDADE">E. M. VILA DA FELICIDADE</option>';
+            NOME_options_str  += '<option value="E. M. VILLA LOBOS">E. M. VILLA LOBOS</option>';
+            NOME_options_str  += '<option value="E.E ALFREDO FERNANDES">E.E ALFREDO FERNANDES</option>';
+            NOME_options_str  += '<option value="E.E. GARCITYLZO DO LAGO E SILVA">E.E. GARCITYLZO DO LAGO E SILVA</option>';
+            NOME_options_str  += '<option value="E.E. JAIRO DA SILVA ROCHA">E.E. JAIRO DA SILVA ROCHA</option>';
+            NOME_options_str  += '<option value="E.E.T.I. BILINGUE  PROF. DJALMA DA CUNHA BATISTA">E.E.T.I. BILINGUE  PROF. DJALMA DA CUNHA BATISTA</option>';
+            NOME_options_str  += '<option value="E.M P. MANUEL FERRAZ DO C. SALES">E.M P. MANUEL FERRAZ DO C. SALES</option>';
+            NOME_options_str  += '<option value="E.M. ARTHUR CEZAR FERREIRA REIS">E.M. ARTHUR CEZAR FERREIRA REIS</option>';
+            NOME_options_str  += '<option value="E.M. BENJAMIM M. FERNANDES">E.M. BENJAMIM M. FERNANDES</option>';
+            NOME_options_str  += '<option value="E.M. DE EDUCACAO ESPECIAL ANDRE VIDAL DE ARAUJO">E.M. DE EDUCACAO ESPECIAL ANDRE VIDAL DE ARAUJO</option>';
+            NOME_options_str  += '<option value="E.M. JOAO GOULART">E.M. JOAO GOULART</option>';
+            NOME_options_str  += '<option value="E.M. JULIA BARJONA LABRE">E.M. JULIA BARJONA LABRE</option>';
+            NOME_options_str  += '<option value="E.M. LUCILENE DE SENA GUIMARÃES">E.M. LUCILENE DE SENA GUIMARÃES</option>';
+            NOME_options_str  += '<option value="E.M. ROBERTO RUIZ HERNANDEZ">E.M. ROBERTO RUIZ HERNANDEZ</option>';
+            NOME_options_str  += '<option value="E.M.PROF.DAVISON DE ARAUJO PEREIRA">E.M.PROF.DAVISON DE ARAUJO PEREIRA</option>';
+            NOME_options_str  += '<option value="EMEF MADALENA DOS SANTOS COSTA">EMEF MADALENA DOS SANTOS COSTA</option>';
+            NOME_options_str  += '<option value="ESC MUN PROF. PEDRO DIOGO DOS SANTOS ROQUE">ESC MUN PROF. PEDRO DIOGO DOS SANTOS ROQUE</option>';
+            NOME_options_str  += '<option value="ESCOLA DE ENFERMAGEM DE MANAUS - UFAM">ESCOLA DE ENFERMAGEM DE MANAUS - UFAM</option>';
+            NOME_options_str  += '<option value="ESCOLA DE FORMAÇÃO PROFISSIONAL ENFERMEIRA FCA SAAVEDRA - CETAM">ESCOLA DE FORMAÇÃO PROFISSIONAL ENFERMEIRA FCA SAAVEDRA - CETAM</option>';
+            NOME_options_str  += '<option value="ESCOLA ESTADUAL CARVALHO LEAL">ESCOLA ESTADUAL CARVALHO LEAL</option>';
+            NOME_options_str  += '<option value="ESCOLA ESTADUAL PROFESSOR ANTENOR SARMENTO PESSOA">ESCOLA ESTADUAL PROFESSOR ANTENOR SARMENTO PESSOA</option>';
+            NOME_options_str  += '<option value="ESCOLA MUNICIPAL NOSSA SENHORA DA PAZ">ESCOLA MUNICIPAL NOSSA SENHORA DA PAZ</option>';
+            NOME_options_str  += '<option value="ESCOLA SUPERIOR DE ARTES E TURISMO - UEA">ESCOLA SUPERIOR DE ARTES E TURISMO - UEA</option>';
+            NOME_options_str  += '<option value="ESCOLA SUPERIOR DE CIENCIAS DA SAUDE - UEA">ESCOLA SUPERIOR DE CIENCIAS DA SAUDE - UEA</option>';
+            NOME_options_str  += '<option value="ESCOLA SUPERIOR DE CIÊNCIAS SOCIAIS - UEA">ESCOLA SUPERIOR DE CIÊNCIAS SOCIAIS - UEA</option>';
+            NOME_options_str  += '<option value="ESCOLA SUPERIOR DE TECNOLOGIA - UEA">ESCOLA SUPERIOR DE TECNOLOGIA - UEA</option>';
+            NOME_options_str  += '<option value="FACULDADE DE MEDICINA - UFAM">FACULDADE DE MEDICINA - UFAM</option>';
+            NOME_options_str  += '<option value="FACULDADE ESTÁCIO (ANTIGO CEL)">FACULDADE ESTÁCIO (ANTIGO CEL)</option>';
+            NOME_options_str  += '<option value="FACULDADE MARTHA FALCAO">FACULDADE MARTHA FALCAO</option>';
+            NOME_options_str  += '<option value="FACULDADE SANTA TERESA">FACULDADE SANTA TERESA</option>';
+            NOME_options_str  += '<option value="FAMETRO UNIDADE CACHOEIRINHA">FAMETRO UNIDADE CACHOEIRINHA</option>';
+            NOME_options_str  += '<option value="FUNDAÇÃO NACIONAL DE SAÚDE">FUNDAÇÃO NACIONAL DE SAÚDE</option>';
+            NOME_options_str  += '<option value="GINÁSIO POLIESPORTIVO AMADEU TEIXEIRA">GINÁSIO POLIESPORTIVO AMADEU TEIXEIRA</option>';
+            NOME_options_str  += '<option value="IFAM (COLÉGIO AGRÍCOLA)">IFAM (COLÉGIO AGRÍCOLA)</option>';
+            NOME_options_str  += '<option value="IFAM - INST FED DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO AMAZONAS">IFAM - INST FED DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO AMAZONAS</option>';
+            NOME_options_str  += '<option value="INCRA">INCRA</option>';
+            NOME_options_str  += '<option value="INSTITUTO DE EDUCACAO DO AMAZONAS">INSTITUTO DE EDUCACAO DO AMAZONAS</option>';
+            NOME_options_str  += '<option value="PARQUE MUNICIPAL DO IDOSO 2">PARQUE MUNICIPAL DO IDOSO 2</option>';
+            NOME_options_str  += '<option value="SECRETARIA DE ESTADO DA FAZENDA - SEFAZ">SECRETARIA DE ESTADO DA FAZENDA - SEFAZ</option>';
+            NOME_options_str  += '<option value="SENAI">SENAI</option>';
+            NOME_options_str  += '<option value="UNINORTE UNIDADE 1">UNINORTE UNIDADE 1</option>';
+            NOME_options_str  += '<option value="UNIP">UNIP</option>';
+            sel_NOME.innerHTML = NOME_options_str;
+            div_NOME.appendChild(sel_NOME);
+            var lab_NOME = document.createElement('div');
+            lab_NOME.innerHTML = 'NOME';
+            lab_NOME.className = 'filterlabel';
+            div_NOME.appendChild(lab_NOME);
+            var reset_NOME = document.createElement('div');
+            reset_NOME.innerHTML = 'clear filter';
+            reset_NOME.className = 'filterlabel';
+            reset_NOME.onclick = function() {
+                var options = document.getElementById("sel_NOME").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_NOME.appendChild(reset_NOME);
+        </script>
+    </body>
+</html>
