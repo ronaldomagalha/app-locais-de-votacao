@@ -203,7 +203,7 @@
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">Local de Votação:</th>\
-                        <td>' + (feature.properties['LOCAL_DE_V'] !== null ? autolinker.link(feature.properties['LOCAL_DE_V'].toLocaleString()) : '') + '</td>\
+                        <td>' + (feature.properties['NOME'] !== null ? autolinker.link(feature.properties['NOME'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">Endereço:</th>\
@@ -263,7 +263,7 @@
             hideMarkerOnCollapse: true,
             zoom: 17,          
                       	          
-            propertyName: 'LOCAL_DE_V'});
+            propertyName: 'NOME'});
         
         searchControl.on('search:locationfound', function(e) {
 		

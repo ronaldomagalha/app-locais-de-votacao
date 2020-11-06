@@ -424,5 +424,5 @@ var json_Locais_de_Votacao_Manaus_2 = {
     { "type": "Feature", "properties": { "OBJECTID": "420", "ID": "926", "NOME": "E. M. PROF. FRANCISCA PERGENTINA DA SILVA", "ENDEREÇO": "RUA CHICO MENDES, S\/N", "LOCALIDADE": null, "BAIRRO": "ZUMBI DOS PALMARES", "ZONA": "LESTE", "Latitude": -3.075873646, "Longitude": -59.937655966999998, "ZONA_1": "59", "SEÇÕES": "15", "TOTAL_DE_E": "5669", "COD_LV": "2305" }, "geometry": { "type": "Point", "coordinates": [ -59.937655966999955, -3.075873645999934 ] } },
     { "type": "Feature", "properties": { "OBJECTID": "421", "ID": "927", "NOME": "E. E. PROF. MARIA TEIXEIRA GOES", "ENDEREÇO": "RUA DRA. DIDIA, S\/N", "LOCALIDADE": null, "BAIRRO": "ZUMBI DOS PALMARES", "ZONA": "LESTE", "Latitude": -3.081896937, "Longitude": -59.944731482999998, "ZONA_1": "59", "SEÇÕES": "14", "TOTAL_DE_E": "5556", "COD_LV": "2313" }, "geometry": { "type": "Point", "coordinates": [ -59.944731482999941, -3.081896936999954 ] } },
     { "type": "Feature", "properties": { "OBJECTID": "422", "ID": "929", "NOME": "CMEI UMBERTO CALDERARO FILHO", "ENDEREÇO": "RUA SAO CRISTOVAO S\/N", "LOCALIDADE": null, "BAIRRO": "ZUMBI DOS PALMARES", "ZONA": "LESTE", "Latitude": -3.074933486, "Longitude": -59.94415118, "ZONA_1": "59", "SEÇÕES": "1", "TOTAL_DE_E": "207", "COD_LV": "2330" }, "geometry": { "type": "Point", "coordinates": [ -59.944151179999949, -3.074933485999964 ] } }
-    ]
-    }
+]
+}
