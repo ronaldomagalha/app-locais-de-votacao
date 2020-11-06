@@ -1,0 +1,1 @@
+# app-locais-de-votacao
