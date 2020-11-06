@@ -1,487 +1,657 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-search.css">
-        <link rel="stylesheet" href="css/filter.css">
-<link rel="stylesheet" href="css/nouislider.min.css">
-        <link rel="stylesheet" href="css/leaflet-measure.css">
-        <style>
-        html, body, #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
-        </style>
-        <title></title>
-    </head>
-    <body>
-        <div id="map">
-        </div>
-        <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
-        <script src="js/leaflet.rotatedMarker.js"></script>
-        <script src="js/leaflet.pattern.js"></script>
-        <script src="js/leaflet-hash.js"></script>
-        <script src="js/Autolinker.min.js"></script>
-        <script src="js/rbush.min.js"></script>
-        <script src="js/labelgun.min.js"></script>
-        <script src="js/labels.js"></script>
-        <script src="js/leaflet-measure.js"></script>
-        <script src="js/leaflet-search.js"></script>
-        <script src="js/tailDT.js"></script>
-<script src="js/nouislider.min.js"></script>
-<script src="js/wNumb.js"></script>
-        <script src="data/Bairros_Manaus_1.js"></script>
-        <script src="data/Locais_de_Votacao_Manaus_2.js"></script>
-        <script>
-        var highlightLayer;
-        function highlightFeature(e) {
-            
-            highlightLayer = e.target;
-            highlightLayer.openPopup();
-        }
-        var map = L.map('map', {
-            zoomControl:true, maxZoom:28, minZoom:1
-        })
-        var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-       
-        var bounds_group = new L.featureGroup([]);
-        function setBounds() {
-            if (bounds_group.getLayers().length) {
-                map.fitBounds(bounds_group.getBounds());
-            }
-        }
-        map.createPane('pane_OSMStandard_0');
-        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
-        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            pane: 'pane_OSMStandard_0',
-            opacity: 1.0,
-            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
-            minZoom: 1,
-            maxZoom: 28,
-            minNativeZoom: 0,
-            maxNativeZoom: 19
-        });
-        layer_OSMStandard_0;
-        map.addLayer(layer_OSMStandard_0);
-        function pop_Bairros_Manaus_1(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-               
-               
-            });
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Nome_Bairr'] !== null ? autolinker.link(feature.properties['Nome_Bairr'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ZONAS'] !== null ? autolinker.link(feature.properties['ZONAS'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['CAMT'] !== null ? autolinker.link(feature.properties['CAMT'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['GABARITO_M'] !== null ? autolinker.link(feature.properties['GABARITO_M'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['TESTADA_MI'] !== null ? autolinker.link(feature.properties['TESTADA_MI'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['AFAST_MIN_'] !== null ? autolinker.link(feature.properties['AFAST_MIN_'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['AFAST_MIN1'] !== null ? autolinker.link(feature.properties['AFAST_MIN1'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['AFAST_MI_1'] !== null ? autolinker.link(feature.properties['AFAST_MI_1'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ATIVIDADES'] !== null ? autolinker.link(feature.properties['ATIVIDADES'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['OBSERVAÇ'] !== null ? autolinker.link(feature.properties['OBSERVAÇ'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['OUTORGA_ON'] !== null ? autolinker.link(feature.properties['OUTORGA_ON'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['DENSIDADE'] !== null ? autolinker.link(feature.properties['DENSIDADE'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['VERTICALIZ'] !== null ? autolinker.link(feature.properties['VERTICALIZ'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ÁREAS_VER'] !== null ? autolinker.link(feature.properties['ÁREAS_VER'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['EQ_COMUNIT'] !== null ? autolinker.link(feature.properties['EQ_COMUNIT'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['SETOR'] !== null ? autolinker.link(feature.properties['SETOR'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['OBSERVACOE'] !== null ? autolinker.link(feature.properties['OBSERVACOE'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['AREA_USO_P'] !== null ? autolinker.link(feature.properties['AREA_USO_P'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-        }
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/qgis2web.css" />
+    <link rel="stylesheet" href="css/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="css/leaflet-search.css" />
+    <link rel="stylesheet" href="css/filter.css" />
 
-        function style_Bairros_Manaus_1_0() {
-            return {
-                pane: 'pane_Bairros_Manaus_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(152,125,183,0.0)',
-                interactive: false,
-            }
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="css/nouislider.min.css" />
+    <link rel="stylesheet" href="css/leaflet-measure.css" />
+    <style>
+      html,
+      body,
+      #map {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+    <title></title>
+  </head>
+  <body>
+    <!-- Image and text -->
+    <nav class="navbar navbar-dark bg-primary">
+      <label class="navbar-brand">LOCAIS DE VOTAÇÃO</label>
+    </nav>
+
+    <div id="map"></div>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet-measure.js"></script>
+    <script src="js/leaflet-search.js"></script>
+    <script src="js/tailDT.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/wNumb.js"></script>
+    <script src="data/Bairros_Manaus_1.js"></script>
+    <script src="data/Locais_de_Votacao_Manaus_2.js"></script>
+    <script>
+      var highlightLayer;
+      function highlightFeature(e) {
+        highlightLayer = e.target;
+        highlightLayer.openPopup();
+      }
+      var map = L.map("map", {
+        zoomControl: true,
+        maxZoom: 28,
+        minZoom: 1,
+      });
+      var hash = new L.Hash(map);
+      map.attributionControl.setPrefix(
+        '<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>'
+      );
+      var autolinker = new Autolinker({
+        truncate: { length: 30, location: "smart" },
+      });
+
+      var bounds_group = new L.featureGroup([]);
+      function setBounds() {
+        if (bounds_group.getLayers().length) {
+          map.fitBounds(bounds_group.getBounds());
         }
-        map.createPane('pane_Bairros_Manaus_1');
-        map.getPane('pane_Bairros_Manaus_1').style.zIndex = 401;
-        map.getPane('pane_Bairros_Manaus_1').style['mix-blend-mode'] = 'normal';
-        var layer_Bairros_Manaus_1 = new L.geoJson(json_Bairros_Manaus_1, {
-            attribution: '',
-            interactive: false,
-            dataVar: 'json_Bairros_Manaus_1',
-            layerName: 'layer_Bairros_Manaus_1',
-            pane: 'pane_Bairros_Manaus_1',
-            onEachFeature: pop_Bairros_Manaus_1,
-            style: style_Bairros_Manaus_1_0,
+      }
+      map.createPane("pane_OSMStandard_0");
+      map.getPane("pane_OSMStandard_0").style.zIndex = 400;
+      var layer_OSMStandard_0 = L.tileLayer(
+        "http://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          pane: "pane_OSMStandard_0",
+          opacity: 1.0,
+          attribution:
+            '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+          minZoom: 1,
+          maxZoom: 28,
+          minNativeZoom: 0,
+          maxNativeZoom: 19,
+        }
+      );
+      layer_OSMStandard_0;
+      map.addLayer(layer_OSMStandard_0);
+      function pop_Bairros_Manaus_1(feature, layer) {
+        layer.on({
+          mouseout: function (e) {
+            if (typeof layer.closePopup == "function") {
+              layer.closePopup();
+            } else {
+              layer.eachLayer(function (feature) {
+                feature.closePopup();
+              });
+            }
+          },
+          mouseover: highlightFeature,
         });
-        bounds_group.addLayer(layer_Bairros_Manaus_1);
-        map.addLayer(layer_Bairros_Manaus_1);
-        function pop_Locais_de_Votacao_Manaus_2(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-               
-            });
-            var popupContent = '<table>\
+        var popupContent =
+          '<table>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["OBJECTID"] !== null
+            ? autolinker.link(feature.properties["OBJECTID"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["Nome_Bairr"] !== null
+            ? autolinker.link(feature.properties["Nome_Bairr"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["ZONAS"] !== null
+            ? autolinker.link(feature.properties["ZONAS"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["CAMT"] !== null
+            ? autolinker.link(feature.properties["CAMT"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["GABARITO_M"] !== null
+            ? autolinker.link(feature.properties["GABARITO_M"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["TESTADA_MI"] !== null
+            ? autolinker.link(feature.properties["TESTADA_MI"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["AFAST_MIN_"] !== null
+            ? autolinker.link(feature.properties["AFAST_MIN_"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["AFAST_MIN1"] !== null
+            ? autolinker.link(feature.properties["AFAST_MIN1"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["AFAST_MI_1"] !== null
+            ? autolinker.link(feature.properties["AFAST_MI_1"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["ATIVIDADES"] !== null
+            ? autolinker.link(feature.properties["ATIVIDADES"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["OBSERVAÇ"] !== null
+            ? autolinker.link(feature.properties["OBSERVAÇ"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["OUTORGA_ON"] !== null
+            ? autolinker.link(feature.properties["OUTORGA_ON"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["DENSIDADE"] !== null
+            ? autolinker.link(feature.properties["DENSIDADE"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["VERTICALIZ"] !== null
+            ? autolinker.link(feature.properties["VERTICALIZ"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["ÁREAS_VER"] !== null
+            ? autolinker.link(feature.properties["ÁREAS_VER"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["EQ_COMUNIT"] !== null
+            ? autolinker.link(feature.properties["EQ_COMUNIT"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["SETOR"] !== null
+            ? autolinker.link(feature.properties["SETOR"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["OBSERVACOE"] !== null
+            ? autolinker.link(feature.properties["OBSERVACOE"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["AREA_USO_P"] !== null
+            ? autolinker.link(feature.properties["AREA_USO_P"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["Shape_Leng"] !== null
+            ? autolinker.link(feature.properties["Shape_Leng"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["Shape_Area"] !== null
+            ? autolinker.link(feature.properties["Shape_Area"].toLocaleString())
+            : "") +
+          "</td>\
+                    </tr>\
+                </table>";
+        layer.bindPopup(popupContent, { maxHeight: 400 });
+      }
+
+      function style_Bairros_Manaus_1_0() {
+        return {
+          pane: "pane_Bairros_Manaus_1",
+          opacity: 1,
+          color: "rgba(35,35,35,1.0)",
+          dashArray: "",
+          lineCap: "butt",
+          lineJoin: "miter",
+          weight: 1.0,
+          fill: true,
+          fillOpacity: 1,
+          fillColor: "rgba(152,125,183,0.0)",
+          interactive: false,
+        };
+      }
+      map.createPane("pane_Bairros_Manaus_1");
+      map.getPane("pane_Bairros_Manaus_1").style.zIndex = 401;
+      map.getPane("pane_Bairros_Manaus_1").style["mix-blend-mode"] = "normal";
+      var layer_Bairros_Manaus_1 = new L.geoJson(json_Bairros_Manaus_1, {
+        attribution: "",
+        interactive: false,
+        dataVar: "json_Bairros_Manaus_1",
+        layerName: "layer_Bairros_Manaus_1",
+        pane: "pane_Bairros_Manaus_1",
+        onEachFeature: pop_Bairros_Manaus_1,
+        style: style_Bairros_Manaus_1_0,
+      });
+      bounds_group.addLayer(layer_Bairros_Manaus_1);
+      map.addLayer(layer_Bairros_Manaus_1);
+      function pop_Locais_de_Votacao_Manaus_2(feature, layer) {
+        layer.on({
+          mouseout: function (e) {
+            if (typeof layer.closePopup == "function") {
+              layer.closePopup();
+            } else {
+              layer.eachLayer(function (feature) {
+                feature.closePopup();
+              });
+            }
+          },
+          mouseover: highlightFeature,
+        });
+        var popupContent =
+          '<table>\
                     <tr>\
                         <th scope="row">Local de Votação:</th>\
-                        <td>' + (feature.properties['NOME'] !== null ? autolinker.link(feature.properties['NOME'].toLocaleString()) : '') + '</td>\
+                        <td>' +
+          (feature.properties["NOME"] !== null
+            ? autolinker.link(feature.properties["NOME"].toLocaleString())
+            : "") +
+          '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">Endereço:</th>\
-                        <td>' + (feature.properties['ENDEREÇO'] !== null ? autolinker.link(feature.properties['ENDEREÇO'].toLocaleString()) : '') + '</td>\
+                        <td>' +
+          (feature.properties["ENDEREÇO"] !== null
+            ? autolinker.link(feature.properties["ENDEREÇO"].toLocaleString())
+            : "") +
+          '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">Bairro:</th>\
-                        <td>' + (feature.properties['BAIRRO'] !== null ? autolinker.link(feature.properties['BAIRRO'].toLocaleString()) : '') + '</td>\
+                        <td>' +
+          (feature.properties["BAIRRO"] !== null
+            ? autolinker.link(feature.properties["BAIRRO"].toLocaleString())
+            : "") +
+          "</td>\
                     </tr>\
                     \
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-        }
+                </table>";
+        layer.bindPopup(popupContent, { maxHeight: 400 });
+      }
 
-        function style_Locais_de_Votacao_Manaus_2_0() {
-            return {
-                pane: 'pane_Locais_de_Votacao_Manaus_2',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Urna.svg',
-            iconSize: [19.0, 19.0]
-        }),
-                interactive: true,
-            }
+      function style_Locais_de_Votacao_Manaus_2_0() {
+        return {
+          pane: "pane_Locais_de_Votacao_Manaus_2",
+          rotationAngle: 0.0,
+          rotationOrigin: "center center",
+          icon: L.icon({
+            iconUrl: "markers/Urna.svg",
+            iconSize: [19.0, 19.0],
+          }),
+          interactive: true,
+        };
+      }
+      map.createPane("pane_Locais_de_Votacao_Manaus_2");
+      map.getPane("pane_Locais_de_Votacao_Manaus_2").style.zIndex = 402;
+      map.getPane("pane_Locais_de_Votacao_Manaus_2").style["mix-blend-mode"] =
+        "normal";
+      //VARIAVEL DO SEARCH LAYER
+      var layer_Locais_de_Votacao_Manaus_2 = new L.geoJson(
+        json_Locais_de_Votacao_Manaus_2,
+        {
+          attribution: "",
+          interactive: true,
+          dataVar: "json_Locais_de_Votacao_Manaus_2",
+          layerName: "layer_Locais_de_Votacao_Manaus_2",
+          pane: "pane_Locais_de_Votacao_Manaus_2",
+          onEachFeature: pop_Locais_de_Votacao_Manaus_2,
+
+          pointToLayer: function (feature, latlng) {
+            var context = {
+              feature: feature,
+              variables: {},
+            };
+            return L.marker(
+              latlng,
+              style_Locais_de_Votacao_Manaus_2_0(feature)
+            );
+          },
         }
-        map.createPane('pane_Locais_de_Votacao_Manaus_2');
-        map.getPane('pane_Locais_de_Votacao_Manaus_2').style.zIndex = 402;
-        map.getPane('pane_Locais_de_Votacao_Manaus_2').style['mix-blend-mode'] = 'normal';
-        //VARIAVEL DO SEARCH LAYER
-        var layer_Locais_de_Votacao_Manaus_2 = new L.geoJson(json_Locais_de_Votacao_Manaus_2, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_Locais_de_Votacao_Manaus_2',
-            layerName: 'layer_Locais_de_Votacao_Manaus_2',
-            pane: 'pane_Locais_de_Votacao_Manaus_2',
-            onEachFeature: pop_Locais_de_Votacao_Manaus_2,
-           
-            pointToLayer: function (feature, latlng) {
-                var context = {
-                    feature: feature,
-                    variables: {}
-                };
-                return L.marker(latlng, style_Locais_de_Votacao_Manaus_2_0(feature));
-            },
+      );
+      bounds_group.addLayer(layer_Locais_de_Votacao_Manaus_2);
+      map.addLayer(layer_Locais_de_Votacao_Manaus_2);
+      var baseMaps = {};
+      L.control
+        .layers(baseMaps, {
+          '<img src="legend/Locais_de_Votacao_Manaus_2.png" /> Locais_de_Votacao_Manaus': layer_Locais_de_Votacao_Manaus_2,
+          '<img src="legend/Bairros_Manaus_1.png" /> Bairros_Manaus': layer_Bairros_Manaus_1,
+          "OSM Standard": layer_OSMStandard_0,
+        })
+        .addTo(map);
+      setBounds();
+      // AQUI MOSTRA O SEARCH
+
+      var searchControl = new L.Control.Search({
+        layer: layer_Locais_de_Votacao_Manaus_2,
+        initial: false,
+        hideMarkerOnCollapse: true,
+        zoom: 17,
+
+        propertyName: "NOME",
+      });
+
+      searchControl
+        .on("search:locationfound", function (e) {
+          console.log(e);
+
+          if (e.layer._popup) e.layer.openPopup();
+        })
+        .on("search:collapsed", function (e) {
+          featuresLayer.eachLayer(function (layer) {
+            //restore feature color
+            featuresLayer.resetStyle(layer);
+          });
         });
-        bounds_group.addLayer(layer_Locais_de_Votacao_Manaus_2);
-        map.addLayer(layer_Locais_de_Votacao_Manaus_2);
-        var baseMaps = {};
-        L.control.layers(baseMaps,{'<img src="legend/Locais_de_Votacao_Manaus_2.png" /> Locais_de_Votacao_Manaus': layer_Locais_de_Votacao_Manaus_2,'<img src="legend/Bairros_Manaus_1.png" /> Bairros_Manaus': layer_Bairros_Manaus_1,"OSM Standard": layer_OSMStandard_0,}).addTo(map);
-        setBounds();
-        // AQUI MOSTRA O SEARCH
 
-        var searchControl = new L.Control.Search({
-            layer: layer_Locais_de_Votacao_Manaus_2,
-            initial: false,
-            hideMarkerOnCollapse: true,
-            zoom: 17,          
-                      	          
-            propertyName: 'NOME'});
-        
-        searchControl.on('search:locationfound', function(e) {
-		
-		console.log(e);
-	
-		if(e.layer._popup)
-			e.layer.openPopup();
+      map.addControl(searchControl);
 
-        }).on('search:collapsed', function(e) {
-
-            featuresLayer.eachLayer(function(layer) {	//restore feature color
-                featuresLayer.resetStyle(layer);
-            });	
-        });	
-
-        map.addControl(searchControl);
-
-    
-        document.getElementsByClassName('search-button')[0].className +=
-         ' fa fa-binoculars';
-        var mapDiv = document.getElementById('map');
-        var row = document.createElement('div');
-        row.className="row";
-        row.id="all";
-        row.style.height = "100%";
-        var col1 = document.createElement('div');
-        col1.className="col9";
-        col1.id = "mapWindow";
-        col1.style.height = "99%";
-        col1.style.width = "80%";
-        col1.style.display = "inline-block";
-        var col2 = document.createElement('div');
-        col2.className="col3";
-        col2.id = "menu";
-        col2.style.display = "inline-block";
-        mapDiv.parentNode.insertBefore(row, mapDiv);
-        document.getElementById("all").appendChild(col1);
-        document.getElementById("all").appendChild(col2);
-        col1.appendChild(mapDiv)
-        var Filters = {"BAIRRO": "str"};
-        function filterFunc() {
-          map.eachLayer(function(lyr){
-          if ("options" in lyr && "dataVar" in lyr["options"]){
+      document.getElementsByClassName("search-button")[0].className +=
+        " fa fa-binoculars";
+      var mapDiv = document.getElementById("map");
+      var row = document.createElement("div");
+      row.className = "row";
+      row.id = "all";
+      row.style.height = "100%";
+      var col1 = document.createElement("div");
+      col1.className = "col9";
+      col1.id = "mapWindow";
+      col1.style.height = "99%";
+      col1.style.width = "80%";
+      col1.style.display = "inline-block";
+      var col2 = document.createElement("div");
+      col2.className = "col3";
+      col2.id = "menu";
+      col2.style.display = "inline-block";
+      mapDiv.parentNode.insertBefore(row, mapDiv);
+      document.getElementById("all").appendChild(col1);
+      document.getElementById("all").appendChild(col2);
+      col1.appendChild(mapDiv);
+      var Filters = { BAIRRO: "str" };
+      function filterFunc() {
+        map.eachLayer(function (lyr) {
+          if ("options" in lyr && "dataVar" in lyr["options"]) {
             features = this[lyr["options"]["dataVar"]].features.slice(0);
-            try{
-              for (key in Filters){
-                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
-                if (Filters[key] == "str" || Filters[key] == "bool"){
+            try {
+              for (key in Filters) {
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "");
+                if (Filters[key] == "str" || Filters[key] == "bool") {
                   var selection = [];
-                  var options = document.getElementById("sel_" + keyS).options
-                  for (var i=0; i < options.length; i++) {
+                  var options = document.getElementById("sel_" + keyS).options;
+                  for (var i = 0; i < options.length; i++) {
                     if (options[i].selected) selection.push(options[i].value);
                   }
-                    try{
-                      if (key in features[0].properties){
-                        for (i = features.length - 1;
-                          i >= 0; --i){
-                          if (selection.indexOf(
-                          features[i].properties[key])<0
-                          && selection.length>0) {
-                          features.splice(i,1);
-                          }
+                  try {
+                    if (key in features[0].properties) {
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          selection.indexOf(features[i].properties[key]) < 0 &&
+                          selection.length > 0
+                        ) {
+                          features.splice(i, 1);
                         }
                       }
-                    } catch(err){
-                  }
+                    }
+                  } catch (err) {}
                 }
-                if (Filters[key] == "int"){
-                  sliderVals =  document.getElementById(
-                    "div_" + keyS).noUiSlider.get();
-                  try{
-                    if (key in features[0].properties){
-                    for (i = features.length - 1; i >= 0; --i){
-                      if (parseInt(features[i].properties[key])
-                          < sliderVals[0]
-                          || parseInt(features[i].properties[key])
-                          > sliderVals[1]){
-                            features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                    }
-                  }
-                if (Filters[key] == "real"){
-                  sliderVals =  document.getElementById(
-                    "div_" + keyS).noUiSlider.get();
-                  try{
-                    if (key in features[0].properties){
-                    for (i = features.length - 1; i >= 0; --i){
-                      if (features[i].properties[key]
-                          < sliderVals[0]
-                          || features[i].properties[key]
-                          > sliderVals[1]){
-                            features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                    }
-                  }
-                if (Filters[key] == "date"
-                  || Filters[key] == "datetime"
-                  || Filters[key] == "time"){
-                  try{
-                    if (key in features[0].properties){
-                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
-                      startdate = document.getElementById("dat_" +
-                        HTMLkey + "_date1").value.replace(" ", "T");
-                      enddate = document.getElementById("dat_" +
-                        HTMLkey + "_date2").value.replace(" ", "T");
-                      for (i = features.length - 1; i >= 0; --i){
-                        if (features[i].properties[key] < startdate
-                          || features[i].properties[key] > enddate){
-                          features.splice(i,1);
+                if (Filters[key] == "int") {
+                  sliderVals = document
+                    .getElementById("div_" + keyS)
+                    .noUiSlider.get();
+                  try {
+                    if (key in features[0].properties) {
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          parseInt(features[i].properties[key]) <
+                            sliderVals[0] ||
+                          parseInt(features[i].properties[key]) > sliderVals[1]
+                        ) {
+                          features.splice(i, 1);
                         }
                       }
                     }
-                  } catch(err){
-                  }
+                  } catch (err) {}
+                }
+                if (Filters[key] == "real") {
+                  sliderVals = document
+                    .getElementById("div_" + keyS)
+                    .noUiSlider.get();
+                  try {
+                    if (key in features[0].properties) {
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          features[i].properties[key] < sliderVals[0] ||
+                          features[i].properties[key] > sliderVals[1]
+                        ) {
+                          features.splice(i, 1);
+                        }
+                      }
+                    }
+                  } catch (err) {}
+                }
+                if (
+                  Filters[key] == "date" ||
+                  Filters[key] == "datetime" ||
+                  Filters[key] == "time"
+                ) {
+                  try {
+                    if (key in features[0].properties) {
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, "");
+                      startdate = document
+                        .getElementById("dat_" + HTMLkey + "_date1")
+                        .value.replace(" ", "T");
+                      enddate = document
+                        .getElementById("dat_" + HTMLkey + "_date2")
+                        .value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          features[i].properties[key] < startdate ||
+                          features[i].properties[key] > enddate
+                        ) {
+                          features.splice(i, 1);
+                        }
+                      }
+                    }
+                  } catch (err) {}
                 }
               }
-            } catch(err){
-            }
-          this[lyr["options"]["layerName"]].clearLayers();
-          this[lyr["options"]["layerName"]].addData(features);
+            } catch (err) {}
+            this[lyr["options"]["layerName"]].clearLayers();
+            this[lyr["options"]["layerName"]].addData(features);
           }
-          })
+        });
+      }
+      document
+        .getElementById("menu")
+        .appendChild(document.createElement("div"));
+      var div_BAIRRO = document.createElement("div");
+      div_BAIRRO.id = "div_BAIRRO";
+      div_BAIRRO.className = "filterselect";
+      document.getElementById("menu").appendChild(div_BAIRRO);
+      sel_BAIRRO = document.createElement("select");
+      sel_BAIRRO.multiple = true;
+      sel_BAIRRO.size = 10;
+      sel_BAIRRO.id = "sel_BAIRRO";
+      var BAIRRO_options_str = "<option value='' unselected></option>";
+      sel_BAIRRO.onchange = function () {
+        filterFunc();
+      };
+      BAIRRO_options_str +=
+        '<option value="ADRIANOPOLIS">ADRIANOPOLIS</option>';
+      BAIRRO_options_str += '<option value="ALEIXO">ALEIXO</option>';
+      BAIRRO_options_str += '<option value="ALVORADA">ALVORADA</option>';
+      BAIRRO_options_str +=
+        '<option value="ARMANDO MENDES">ARMANDO MENDES</option>';
+      BAIRRO_options_str += '<option value="BETANIA">BETANIA</option>';
+      BAIRRO_options_str +=
+        '<option value="CACHOEIRINHA">CACHOEIRINHA</option>';
+      BAIRRO_options_str += '<option value="CENTRO">CENTRO</option>';
+      BAIRRO_options_str += '<option value="CHAPADA">CHAPADA</option>';
+      BAIRRO_options_str +=
+        '<option value="CIDADE DE DEUS">CIDADE DE DEUS</option>';
+      BAIRRO_options_str += '<option value="CIDADE NOVA">CIDADE NOVA</option>';
+      BAIRRO_options_str +=
+        '<option value="COLONIA ANTONIO ALEIXO">COLONIA ANTONIO ALEIXO</option>';
+      BAIRRO_options_str +=
+        '<option value="COLONIA OLIVEIRA MACHADO">COLONIA OLIVEIRA MACHADO</option>';
+      BAIRRO_options_str +=
+        '<option value="COLONIA SANTO ANTONIO">COLONIA SANTO ANTONIO</option>';
+      BAIRRO_options_str +=
+        '<option value="COLONIA TERRA NOVA">COLONIA TERRA NOVA</option>';
+      BAIRRO_options_str += '<option value="COMPENSA">COMPENSA</option>';
+      BAIRRO_options_str += '<option value="COROADO">COROADO</option>';
+      BAIRRO_options_str += '<option value="CRESPO">CRESPO</option>';
+      BAIRRO_options_str += '<option value="DOM PEDRO">DOM PEDRO</option>';
+      BAIRRO_options_str += '<option value="EDUCANDOS">EDUCANDOS</option>';
+      BAIRRO_options_str += '<option value="FLORES">FLORES</option>';
+      BAIRRO_options_str +=
+        '<option value="GILBERTO MESTRINHO">GILBERTO MESTRINHO</option>';
+      BAIRRO_options_str += '<option value="GLORIA">GLORIA</option>';
+      BAIRRO_options_str += '<option value="JAPIIM">JAPIIM</option>';
+      BAIRRO_options_str +=
+        '<option value="JORGE TEIXEIRA">JORGE TEIXEIRA</option>';
+      BAIRRO_options_str += '<option value="LAGO AZUL">LAGO AZUL</option>';
+      BAIRRO_options_str +=
+        '<option value="LIRIO DO VALE">LIRIO DO VALE</option>';
+      BAIRRO_options_str += '<option value="MAUAZINHO">MAUAZINHO</option>';
+      BAIRRO_options_str +=
+        '<option value="MONTE DAS OLIVEIRAS">MONTE DAS OLIVEIRAS</option>';
+      BAIRRO_options_str +=
+        '<option value="MORRO DA LIBERDADE">MORRO DA LIBERDADE</option>';
+      BAIRRO_options_str +=
+        '<option value="NOSSA SENHORA APARECIDA">NOSSA SENHORA APARECIDA</option>';
+      BAIRRO_options_str +=
+        '<option value="NOSSA SENHORA DAS GRAÇAS">NOSSA SENHORA DAS GRAÇAS</option>';
+      BAIRRO_options_str += '<option value="NOVA CIDADE">NOVA CIDADE</option>';
+      BAIRRO_options_str +=
+        '<option value="NOVA ESPERANCA">NOVA ESPERANCA</option>';
+      BAIRRO_options_str += '<option value="NOVO ALEIXO">NOVO ALEIXO</option>';
+      BAIRRO_options_str += '<option value="NOVO ISRAEL">NOVO ISRAEL</option>';
+      BAIRRO_options_str +=
+        '<option value="PARQUE 10 DE NOVEMBRO">PARQUE 10 DE NOVEMBRO</option>';
+      BAIRRO_options_str += '<option value="PAZ">PAZ</option>';
+      BAIRRO_options_str += '<option value="PETROPOLIS">PETROPOLIS</option>';
+      BAIRRO_options_str += '<option value="PLANALTO">PLANALTO</option>';
+      BAIRRO_options_str +=
+        '<option value="PRACA 14 DE JANEIRO">PRACA 14 DE JANEIRO</option>';
+      BAIRRO_options_str +=
+        '<option value="PRESIDENTE VARGAS">PRESIDENTE VARGAS</option>';
+      BAIRRO_options_str +=
+        '<option value="PURAQUEQUARA">PURAQUEQUARA</option>';
+      BAIRRO_options_str += '<option value="RAIZ">RAIZ</option>';
+      BAIRRO_options_str += '<option value="REDENCAO">REDENCAO</option>';
+      BAIRRO_options_str +=
+        '<option value="SANTA ETELVINA">SANTA ETELVINA</option>';
+      BAIRRO_options_str += '<option value="SANTA LUZIA">SANTA LUZIA</option>';
+      BAIRRO_options_str +=
+        '<option value="SANTO AGOSTINHO">SANTO AGOSTINHO</option>';
+      BAIRRO_options_str +=
+        '<option value="SANTO ANTONIO">SANTO ANTONIO</option>';
+      BAIRRO_options_str +=
+        '<option value="SAO FRANCISCO">SAO FRANCISCO</option>';
+      BAIRRO_options_str += '<option value="SAO GERALDO">SAO GERALDO</option>';
+      BAIRRO_options_str += '<option value="SAO JORGE">SAO JORGE</option>';
+      BAIRRO_options_str +=
+        '<option value="SAO JOSE OPERARIO">SAO JOSE OPERARIO</option>';
+      BAIRRO_options_str += '<option value="SAO LAZARO">SAO LAZARO</option>';
+      BAIRRO_options_str +=
+        '<option value="SAO RAIMUNDO">SAO RAIMUNDO</option>';
+      BAIRRO_options_str +=
+        '<option value="TANCREDO NEVES">TANCREDO NEVES</option>';
+      BAIRRO_options_str += '<option value="TARUMÃ">TARUMÃ</option>';
+      BAIRRO_options_str += '<option value="TARUMÃ AÇU">TARUMÃ AÇU</option>';
+      BAIRRO_options_str += '<option value="VILA BURITI">VILA BURITI</option>';
+      BAIRRO_options_str +=
+        '<option value="VILA DA PRATA">VILA DA PRATA</option>';
+      BAIRRO_options_str +=
+        '<option value="ZUMBI DOS PALMARES">ZUMBI DOS PALMARES</option>';
+      sel_BAIRRO.innerHTML = BAIRRO_options_str;
+      div_BAIRRO.appendChild(sel_BAIRRO);
+      var lab_BAIRRO = document.createElement("div");
+      lab_BAIRRO.innerHTML = "BAIRROS";
+      lab_BAIRRO.className = "filterlabel";
+      div_BAIRRO.appendChild(lab_BAIRRO);
+      var reset_BAIRRO = document.createElement("div");
+      reset_BAIRRO.innerHTML = "TODOS";
+      reset_BAIRRO.className = "filterlabel";
+      reset_BAIRRO.onclick = function () {
+        var options = document.getElementById("sel_BAIRRO").options;
+        for (var i = 0; i < options.length; i++) {
+          options[i].selected = false;
         }
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_BAIRRO = document.createElement('div');
-            div_BAIRRO.id = "div_BAIRRO";
-            div_BAIRRO.className= "filterselect";
-            document.getElementById("menu").appendChild(div_BAIRRO);
-            sel_BAIRRO = document.createElement('select');
-            sel_BAIRRO.multiple = true;
-            sel_BAIRRO.size = 10;
-            sel_BAIRRO.id = "sel_BAIRRO";
-            var BAIRRO_options_str = "<option value='' unselected></option>";
-            sel_BAIRRO.onchange = function(){filterFunc()};
-            BAIRRO_options_str  += '<option value="ADRIANOPOLIS">ADRIANOPOLIS</option>';
-            BAIRRO_options_str  += '<option value="ALEIXO">ALEIXO</option>';
-            BAIRRO_options_str  += '<option value="ALVORADA">ALVORADA</option>';
-            BAIRRO_options_str  += '<option value="ARMANDO MENDES">ARMANDO MENDES</option>';
-            BAIRRO_options_str  += '<option value="BETANIA">BETANIA</option>';
-            BAIRRO_options_str  += '<option value="CACHOEIRINHA">CACHOEIRINHA</option>';
-            BAIRRO_options_str  += '<option value="CENTRO">CENTRO</option>';
-            BAIRRO_options_str  += '<option value="CHAPADA">CHAPADA</option>';
-            BAIRRO_options_str  += '<option value="CIDADE DE DEUS">CIDADE DE DEUS</option>';
-            BAIRRO_options_str  += '<option value="CIDADE NOVA">CIDADE NOVA</option>';
-            BAIRRO_options_str  += '<option value="COLONIA ANTONIO ALEIXO">COLONIA ANTONIO ALEIXO</option>';
-            BAIRRO_options_str  += '<option value="COLONIA OLIVEIRA MACHADO">COLONIA OLIVEIRA MACHADO</option>';
-            BAIRRO_options_str  += '<option value="COLONIA SANTO ANTONIO">COLONIA SANTO ANTONIO</option>';
-            BAIRRO_options_str  += '<option value="COLONIA TERRA NOVA">COLONIA TERRA NOVA</option>';
-            BAIRRO_options_str  += '<option value="COMPENSA">COMPENSA</option>';
-            BAIRRO_options_str  += '<option value="COROADO">COROADO</option>';
-            BAIRRO_options_str  += '<option value="CRESPO">CRESPO</option>';
-            BAIRRO_options_str  += '<option value="DOM PEDRO">DOM PEDRO</option>';
-            BAIRRO_options_str  += '<option value="EDUCANDOS">EDUCANDOS</option>';
-            BAIRRO_options_str  += '<option value="FLORES">FLORES</option>';
-            BAIRRO_options_str  += '<option value="GILBERTO MESTRINHO">GILBERTO MESTRINHO</option>';
-            BAIRRO_options_str  += '<option value="GLORIA">GLORIA</option>';
-            BAIRRO_options_str  += '<option value="JAPIIM">JAPIIM</option>';
-            BAIRRO_options_str  += '<option value="JORGE TEIXEIRA">JORGE TEIXEIRA</option>';
-            BAIRRO_options_str  += '<option value="LAGO AZUL">LAGO AZUL</option>';
-            BAIRRO_options_str  += '<option value="LIRIO DO VALE">LIRIO DO VALE</option>';
-            BAIRRO_options_str  += '<option value="MAUAZINHO">MAUAZINHO</option>';
-            BAIRRO_options_str  += '<option value="MONTE DAS OLIVEIRAS">MONTE DAS OLIVEIRAS</option>';
-            BAIRRO_options_str  += '<option value="MORRO DA LIBERDADE">MORRO DA LIBERDADE</option>';
-            BAIRRO_options_str  += '<option value="NOSSA SENHORA APARECIDA">NOSSA SENHORA APARECIDA</option>';
-            BAIRRO_options_str  += '<option value="NOSSA SENHORA DAS GRAÇAS">NOSSA SENHORA DAS GRAÇAS</option>';
-            BAIRRO_options_str  += '<option value="NOVA CIDADE">NOVA CIDADE</option>';
-            BAIRRO_options_str  += '<option value="NOVA ESPERANCA">NOVA ESPERANCA</option>';
-            BAIRRO_options_str  += '<option value="NOVO ALEIXO">NOVO ALEIXO</option>';
-            BAIRRO_options_str  += '<option value="NOVO ISRAEL">NOVO ISRAEL</option>';
-            BAIRRO_options_str  += '<option value="PARQUE 10 DE NOVEMBRO">PARQUE 10 DE NOVEMBRO</option>';
-            BAIRRO_options_str  += '<option value="PAZ">PAZ</option>';
-            BAIRRO_options_str  += '<option value="PETROPOLIS">PETROPOLIS</option>';
-            BAIRRO_options_str  += '<option value="PLANALTO">PLANALTO</option>';
-            BAIRRO_options_str  += '<option value="PRACA 14 DE JANEIRO">PRACA 14 DE JANEIRO</option>';
-            BAIRRO_options_str  += '<option value="PRESIDENTE VARGAS">PRESIDENTE VARGAS</option>';
-            BAIRRO_options_str  += '<option value="PURAQUEQUARA">PURAQUEQUARA</option>';
-            BAIRRO_options_str  += '<option value="RAIZ">RAIZ</option>';
-            BAIRRO_options_str  += '<option value="REDENCAO">REDENCAO</option>';
-            BAIRRO_options_str  += '<option value="SANTA ETELVINA">SANTA ETELVINA</option>';
-            BAIRRO_options_str  += '<option value="SANTA LUZIA">SANTA LUZIA</option>';
-            BAIRRO_options_str  += '<option value="SANTO AGOSTINHO">SANTO AGOSTINHO</option>';
-            BAIRRO_options_str  += '<option value="SANTO ANTONIO">SANTO ANTONIO</option>';
-            BAIRRO_options_str  += '<option value="SAO FRANCISCO">SAO FRANCISCO</option>';
-            BAIRRO_options_str  += '<option value="SAO GERALDO">SAO GERALDO</option>';
-            BAIRRO_options_str  += '<option value="SAO JORGE">SAO JORGE</option>';
-            BAIRRO_options_str  += '<option value="SAO JOSE OPERARIO">SAO JOSE OPERARIO</option>';
-            BAIRRO_options_str  += '<option value="SAO LAZARO">SAO LAZARO</option>';
-            BAIRRO_options_str  += '<option value="SAO RAIMUNDO">SAO RAIMUNDO</option>';
-            BAIRRO_options_str  += '<option value="TANCREDO NEVES">TANCREDO NEVES</option>';
-            BAIRRO_options_str  += '<option value="TARUMÃ">TARUMÃ</option>';
-            BAIRRO_options_str  += '<option value="TARUMÃ AÇU">TARUMÃ AÇU</option>';
-            BAIRRO_options_str  += '<option value="VILA BURITI">VILA BURITI</option>';
-            BAIRRO_options_str  += '<option value="VILA DA PRATA">VILA DA PRATA</option>';
-            BAIRRO_options_str  += '<option value="ZUMBI DOS PALMARES">ZUMBI DOS PALMARES</option>';
-            sel_BAIRRO.innerHTML = BAIRRO_options_str;
-            div_BAIRRO.appendChild(sel_BAIRRO);
-            var lab_BAIRRO = document.createElement('div');
-            lab_BAIRRO.innerHTML = 'BAIRROS';
-            lab_BAIRRO.className = 'filterlabel';
-            div_BAIRRO.appendChild(lab_BAIRRO);
-            var reset_BAIRRO = document.createElement('div');
-            reset_BAIRRO.innerHTML = 'TODOS';
-            reset_BAIRRO.className = 'filterlabel';
-            reset_BAIRRO.onclick = function() {
-                var options = document.getElementById("sel_BAIRRO").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_BAIRRO.appendChild(reset_BAIRRO);
-        </script>
-    </body>
+        filterFunc();
+      };
+      div_BAIRRO.appendChild(reset_BAIRRO);
+    </script>
+  </body>
 </html>
