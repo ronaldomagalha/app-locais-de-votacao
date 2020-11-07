@@ -656,11 +656,11 @@
       sel_BAIRRO.innerHTML = BAIRRO_options_str;
       div_BAIRRO.appendChild(sel_BAIRRO);
       var lab_BAIRRO = document.createElement("div");
-      lab_BAIRRO.innerHTML = "BAIRROS";
+      lab_BAIRRO.innerHTML = "Selecione um ou mais Bairros da lista";
       lab_BAIRRO.className = "filterlabel";
       div_BAIRRO.appendChild(lab_BAIRRO);
-      var reset_BAIRRO = document.createElement("div");
-      reset_BAIRRO.innerHTML = "TODOS";
+      var reset_BAIRRO = document.createElement("button");
+      reset_BAIRRO.innerHTML = "Mostrar Todos";
       reset_BAIRRO.className = "filterlabel";
       reset_BAIRRO.onclick = function () {
         var options = document.getElementById("sel_BAIRRO").options;

@@ -33,10 +33,39 @@ main {
 
 #menu {
   padding-top: 30px;
+  text-align: center;
+  display: block;
+}
+
+button.filterlabel {
+  background-color: royalblue;
+  color: #fff !important;
+  font-weight: bold;
+  width: 90%;
+  height: 45px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+button.filterlabel:hover {
+  background-color: rgb(109, 144, 252);
+}
+
+.filterlabel{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #sel_BAIRRO {
   border: none;
+  height: 100%;
+  max-height: 300px;
+  margin-bottom: 40px;
 }
 
 .navbar {
